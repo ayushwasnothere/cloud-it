@@ -56,7 +56,7 @@ Delete Project
 
 - Each container runs with `sandbox` user (no root)
 - Limited to project directory
-- Network access disabled
+- Network mode is configurable via `SANDBOX_NETWORK_MODE` (`bridge` by default, `none` to fully disable)
 - Memory/CPU limits via Docker config
 - Idle timeout after 10 minutes (kills container)
 

@@ -20,6 +20,8 @@ const MEMORY_LIMIT = 512 * 1024 * 1024;
 const CPU_LIMIT = 1_000_000_000;
 const PID_LIMIT = 128;
 const IDLE_TIMEOUT = 30 * 60 * 1000;
+const SANDBOX_NETWORK_MODE = process.env.SANDBOX_NETWORK_MODE || 'bridge';
+const ALLOWED_NETWORK_MODES = new Set(['none', 'bridge', 'host']);
 
 // Strict UUID v4 pattern — projectId must match before use in any path or name
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -66,6 +68,11 @@ async function _getOrCreateContainer(projectId: string, runtime: string): Promis
   if (!ALLOWED_RUNTIMES.has(runtime)) {
     throw new Error(`Invalid runtime: ${runtime}`);
   }
+  if (!ALLOWED_NETWORK_MODES.has(SANDBOX_NETWORK_MODE)) {
+    throw new Error(
+      `Invalid SANDBOX_NETWORK_MODE: ${SANDBOX_NETWORK_MODE}. Allowed values: none, bridge, host`
+    );
+  }
 
   const name = containerName(projectId);
   const hostPath = safeWorkspacePath(projectId);
@@ -75,6 +82,14 @@ async function _getOrCreateContainer(projectId: string, runtime: string): Promis
   try {
     const container = docker.getContainer(name);
     const info = await container.inspect();
+
+    if (info.HostConfig?.NetworkMode !== SANDBOX_NETWORK_MODE) {
+      if (info.State.Running) {
+        await container.stop({ t: 5 });
+      }
+      await container.remove({ force: true });
+      throw Object.assign(new Error('Recreating container due to network mode change'), { statusCode: 404 });
+    }
 
     if (!info.State.Running) {
       await container.start();
@@ -104,7 +119,7 @@ async function _getOrCreateContainer(projectId: string, runtime: string): Promis
         CapDrop: ['ALL'],
         SecurityOpt: ['no-new-privileges'],
         Tmpfs: { '/tmp': 'size=64m' },
-        NetworkMode: 'none',
+        NetworkMode: SANDBOX_NETWORK_MODE,
         AutoRemove: false,
       },
     });
