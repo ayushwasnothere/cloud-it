@@ -145,24 +145,30 @@ export async function downloadProjectArchive(
   projectId: string,
   projectName: string
 ): Promise<void> {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3006'}/projects/${projectId}/download`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    },
-  })
-
-  if (!response.ok) {
-    throw new Error(await response.text())
-  }
-
-  const blob = await response.blob()
-  const url = window.URL.createObjectURL(blob)
+  const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3006'}/projects/${projectId}/download`
+  
   const a = document.createElement('a')
   a.href = url
   a.download = `${projectName.replace(/[^a-zA-Z0-9-]/g, '_')}.zip`
+  a.target = '_blank'
   document.body.appendChild(a)
   a.click()
-  window.URL.revokeObjectURL(url)
+  document.body.removeChild(a)
+}
+
+export async function downloadProjectFile(
+  projectId: string,
+  path: string,
+  fileName: string
+): Promise<void> {
+  const urlParams = new URLSearchParams({ path })
+  const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3006'}/projects/${projectId}/file/download?${urlParams.toString()}`
+  
+  const a = document.createElement('a')
+  a.href = url
+  a.download = fileName.replace(/[^a-zA-Z0-9-.]/g, '_')
+  a.target = '_blank'
+  document.body.appendChild(a)
+  a.click()
   document.body.removeChild(a)
 }

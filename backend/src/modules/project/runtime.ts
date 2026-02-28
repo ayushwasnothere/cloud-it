@@ -525,9 +525,8 @@ const runtimeRoutes = new Elysia({ prefix: '/projects' })
 
         const response = new Response(file);
 
-        response.clone().blob().finally(() => {
-          unlink(zipPath).catch(() => { });
-        });
+        // Cleanup after stream completes or reasonable timeout (e.g. 5 mins)
+        setTimeout(() => unlink(zipPath).catch(() => {}), 5 * 60 * 1000);
 
         return response;
       } catch (error: any) {
@@ -538,6 +537,56 @@ const runtimeRoutes = new Elysia({ prefix: '/projects' })
     },
     {
       params: t.Object({ projectId: t.String({ format: 'uuid' }) }),
+    }
+  )
+
+  .get(
+    '/:projectId/file/download',
+    async ({ params, query, userId, set }) => {
+      if (!userId) return new Response('Unauthorized', { status: 401 });
+      if (!checkRateLimit(userId)) return new Response('Too Many Requests', { status: 429 });
+
+      const requestPath = query.path;
+      if (!requestPath || requestPath.includes('..')) {
+        set.status = 400;
+        return 'Invalid path';
+      }
+
+      const project = await prisma.projects.findFirst({
+        where: { id: params.projectId, userId },
+        select: { id: true, name: true },
+      });
+      if (!project) {
+        set.status = 404;
+        return 'Project not found';
+      }
+
+      const workspacePath = getProjectWorkspacePath(project.id);
+      const filePath = resolve(workspacePath, requestPath.replace(/^\/+/, ''));
+
+      if (!filePath.startsWith(workspacePath)) {
+        set.status = 403;
+        return 'Access denied';
+      }
+
+      const fileStat = await stat(filePath).catch(() => null);
+      if (!fileStat || !fileStat.isFile()) {
+        set.status = 404;
+        return 'File not found';
+      }
+
+      const file = Bun.file(filePath);
+
+      set.headers = {
+        'Content-Type': 'application/octet-stream',
+        'Content-Disposition': `attachment; filename="${basename(filePath).replace(/[^a-zA-Z0-9-.]/g, '_')}"`,
+      };
+
+      return new Response(file);
+    },
+    {
+      params: t.Object({ projectId: t.String({ format: 'uuid' }) }),
+      query: t.Object({ path: t.String() })
     }
   )
 

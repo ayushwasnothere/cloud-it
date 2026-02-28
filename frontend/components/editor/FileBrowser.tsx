@@ -558,9 +558,9 @@ export function FileBrowser({
               <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={async () => {
                 if (!activeEntry || activeEntry.type === 'directory') return
                 try {
-                  const { downloadProjectArchive } = await import('@/api/projects')
+                  const { downloadProjectFile } = await import('@/api/projects')
                   toast.info('Preparing download...')
-                  await downloadProjectArchive(projectId, `${projectName}-${activeEntry.name}`)
+                  await downloadProjectFile(projectId, activeEntry.path, activeEntry.name)
                 } catch (err: any) {
                   toast.error(err.message || 'Failed to download file')
                 }
