@@ -5,6 +5,7 @@ import { ContainerManager, getProjectWorkspacePath } from '../../services/docker
 import { checkRateLimit } from '../../services/rateLimiter';
 import { basename, dirname, relative, resolve, sep } from 'node:path';
 import { mkdir, readdir, readFile, stat, unlink, writeFile } from 'node:fs/promises';
+import { $ } from 'bun';
 
 const ALLOWED_RUNTIMES = new Set(['node', 'python', 'bun']);
 
@@ -481,6 +482,65 @@ const runtimeRoutes = new Elysia({ prefix: '/projects' })
     }
   )
 
+  .get(
+    '/:projectId/download',
+    async ({ params, userId, set }) => {
+      if (!userId) {
+        set.status = 401;
+        return 'Unauthorized';
+      }
+      if (!checkRateLimit(userId)) {
+        set.status = 429;
+        return 'Too Many Requests';
+      }
+
+      const project = await prisma.projects.findFirst({
+        where: { id: params.projectId, userId },
+        select: { id: true, name: true },
+      });
+      if (!project) {
+        set.status = 404;
+        return 'Project not found';
+      }
+
+      const workspacePath = getProjectWorkspacePath(project.id);
+      const zipPath = resolve('/tmp', `${project.id}-${Date.now()}.zip`);
+
+      try {
+        await $`zip -r ${zipPath} . -x "node_modules/*" "__pycache__/*" ".venv/*" ".git/*" ".next/*"`.cwd(workspacePath);
+
+        const fileStat = await stat(zipPath);
+        if (fileStat.size > 500 * 1024 * 1024) {
+          await unlink(zipPath);
+          set.status = 413;
+          return 'Project is too large to download (exceeds 500MB)';
+        }
+
+        const file = Bun.file(zipPath);
+
+        set.headers = {
+          'Content-Type': 'application/zip',
+          'Content-Disposition': `attachment; filename="${project.name.replace(/[^a-zA-Z0-9-]/g, '_')}.zip"`,
+        };
+
+        const response = new Response(file);
+
+        response.clone().blob().finally(() => {
+          unlink(zipPath).catch(() => { });
+        });
+
+        return response;
+      } catch (error: any) {
+        console.error(`[download] Zip failed for ${project.id}:`, error);
+        set.status = 500;
+        return 'Failed to generate project archive';
+      }
+    },
+    {
+      params: t.Object({ projectId: t.String({ format: 'uuid' }) }),
+    }
+  )
+
   .put(
     '/:projectId/files/content',
     async ({ params, body, userId }) => {
@@ -589,6 +649,84 @@ runtimeRoutes.delete(
   {
     params: t.Object({ projectId: t.String({ format: 'uuid' }) }),
     query: t.Object({ path: t.String({ minLength: 1 }) }),
+  }
+);
+
+runtimeRoutes.post(
+  '/:projectId/files/rename',
+  async ({ params, body, userId }) => {
+    if (!userId) return new Response('Unauthorized', { status: 401 });
+    if (!checkRateLimit(userId)) return new Response('Too Many Requests', { status: 429 });
+
+    const project = await prisma.projects.findFirst({
+      where: { id: params.projectId, userId },
+      select: { id: true },
+    });
+    if (!project) return new Response('Project not found', { status: 404 });
+
+    const oldPath = body.oldPath.trim().replace(/^\/+/, '');
+    const newPath = body.newPath.trim().replace(/^\/+/, '');
+
+    if (!oldPath || !newPath) {
+      return new Response('Invalid paths', { status: 400 });
+    }
+
+    const workspacePath = getProjectWorkspacePath(project.id);
+    const oldFilePath = resolveProjectPath(workspacePath, oldPath);
+    const newFilePath = resolveProjectPath(workspacePath, newPath);
+
+    try {
+      await $`mv ${oldFilePath} ${newFilePath}`;
+      return { success: true, oldPath, newPath };
+    } catch {
+      return new Response('Failed to rename', { status: 500 });
+    }
+  },
+  {
+    params: t.Object({ projectId: t.String({ format: 'uuid' }) }),
+    body: t.Object({
+      oldPath: t.String({ minLength: 1 }),
+      newPath: t.String({ minLength: 1 }),
+    }),
+  }
+);
+
+runtimeRoutes.post(
+  '/:projectId/files/copy',
+  async ({ params, body, userId }) => {
+    if (!userId) return new Response('Unauthorized', { status: 401 });
+    if (!checkRateLimit(userId)) return new Response('Too Many Requests', { status: 429 });
+
+    const project = await prisma.projects.findFirst({
+      where: { id: params.projectId, userId },
+      select: { id: true },
+    });
+    if (!project) return new Response('Project not found', { status: 404 });
+
+    const srcPath = body.srcPath.trim().replace(/^\/+/, '');
+    const destPath = body.destPath.trim().replace(/^\/+/, '');
+
+    if (!srcPath || !destPath) {
+      return new Response('Invalid paths', { status: 400 });
+    }
+
+    const workspacePath = getProjectWorkspacePath(project.id);
+    const srcFilePath = resolveProjectPath(workspacePath, srcPath);
+    const destFilePath = resolveProjectPath(workspacePath, destPath);
+
+    try {
+      await $`cp -r ${srcFilePath} ${destFilePath}`;
+      return { success: true, srcPath, destPath };
+    } catch {
+      return new Response('Failed to copy', { status: 500 });
+    }
+  },
+  {
+    params: t.Object({ projectId: t.String({ format: 'uuid' }) }),
+    body: t.Object({
+      srcPath: t.String({ minLength: 1 }),
+      destPath: t.String({ minLength: 1 }),
+    }),
   }
 );
 

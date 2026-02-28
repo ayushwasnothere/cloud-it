@@ -112,3 +112,57 @@ export async function deleteProjectFile(
     }
   )
 }
+
+export async function renameProjectFile(
+  projectId: string,
+  oldPath: string,
+  newPath: string
+): Promise<{ success: boolean; oldPath: string; newPath: string }> {
+  return createApiRequest<{ success: boolean; oldPath: string; newPath: string }>(
+    `/projects/${projectId}/files/rename`,
+    {
+      method: 'POST',
+      body: JSON.stringify({ oldPath, newPath }),
+    }
+  )
+}
+
+export async function copyProjectFile(
+  projectId: string,
+  srcPath: string,
+  destPath: string
+): Promise<{ success: boolean; srcPath: string; destPath: string }> {
+  return createApiRequest<{ success: boolean; srcPath: string; destPath: string }>(
+    `/projects/${projectId}/files/copy`,
+    {
+      method: 'POST',
+      body: JSON.stringify({ srcPath, destPath }),
+    }
+  )
+}
+
+export async function downloadProjectArchive(
+  projectId: string,
+  projectName: string
+): Promise<void> {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3006'}/projects/${projectId}/download`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  })
+
+  if (!response.ok) {
+    throw new Error(await response.text())
+  }
+
+  const blob = await response.blob()
+  const url = window.URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `${projectName.replace(/[^a-zA-Z0-9-]/g, '_')}.zip`
+  document.body.appendChild(a)
+  a.click()
+  window.URL.revokeObjectURL(url)
+  document.body.removeChild(a)
+}

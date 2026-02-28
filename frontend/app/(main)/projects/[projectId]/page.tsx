@@ -374,6 +374,7 @@ export default function ProjectPage() {
               onToggleTerminal={() => setTerminalVisible((value) => !value)}
               isTerminalVisible={terminalVisible}
               projectName={project.name}
+              projectId={project.id}
             />
           </ResizablePanel>
 
@@ -385,26 +386,33 @@ export default function ProjectPage() {
                 <ResizablePanel defaultSize={70} minSize={40}>
                   <section className="flex h-full flex-col bg-app-editor-bg">
                     <div className="flex items-center justify-between border-b border-app-border bg-app-editor-header">
-                      <div className="flex min-w-0 items-center overflow-x-auto">
+                      <div className="flex min-w-0 flex-1 items-center overflow-x-auto px-2">
                         {tabs.length === 0 ? (
-                          <div className="px-3 py-2 text-xs text-app-subtle">No file open</div>
+                          <div className="px-3 py-2 text-sm text-app-subtle">No file open</div>
                         ) : (
                           tabs.map((tab) => (
                             <div
                               key={tab.id}
-                              className={`group flex items-center gap-2 border-r border-app-border px-3 py-2 text-xs transition-colors ${activeTabId === tab.id
-                                  ? 'bg-app-editor-bg text-app-text'
-                                  : 'bg-app-surface-2 text-app-muted hover:text-app-text'
+                              className={`group relative flex h-full cursor-pointer items-center gap-2 px-3 py-2.5 text-sm transition-colors ${activeTabId === tab.id
+                                ? 'text-app-text bg-app-surface-2/50'
+                                : 'text-app-muted hover:text-app-text hover:bg-app-surface-2/30'
                                 }`}
+                              onClick={() => setActiveTab(tab.id)}
                             >
-                              <button onClick={() => setActiveTab(tab.id)}>{tab.name}</button>
+                              <span>{tab.name}</span>
                               {tab.isDirty && <span className="text-app-primary">●</span>}
                               <button
-                                onClick={() => handleCloseTab(tab.id)}
-                                className="rounded px-1 text-app-subtle opacity-0 hover:bg-app-surface-3 hover:text-app-text group-hover:opacity-100"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleCloseTab(tab.id)
+                                }}
+                                className="rounded-[4px] px-1 text-app-subtle opacity-0 transition-opacity hover:bg-app-surface-3 hover:text-app-text group-hover:opacity-100"
                               >
                                 ×
                               </button>
+                              {activeTabId === tab.id && (
+                                <div className="absolute bottom-0 left-0 h-[2px] w-full bg-app-text" />
+                              )}
                             </div>
                           ))
                         )}
@@ -465,26 +473,33 @@ export default function ProjectPage() {
             ) : (
               <section className="flex h-full flex-col bg-app-editor-bg">
                 <div className="flex items-center justify-between border-b border-app-border bg-app-editor-header">
-                  <div className="flex min-w-0 items-center overflow-x-auto">
+                  <div className="flex min-w-0 flex-1 items-center overflow-x-auto px-2">
                     {tabs.length === 0 ? (
-                      <div className="px-3 py-2 text-xs text-app-subtle">No file open</div>
+                      <div className="px-3 py-2 text-sm text-app-subtle">No file open</div>
                     ) : (
                       tabs.map((tab) => (
                         <div
                           key={tab.id}
-                          className={`group flex items-center gap-2 border-r border-app-border px-3 py-2 text-xs transition-colors ${activeTabId === tab.id
-                              ? 'bg-app-editor-bg text-app-text'
-                              : 'bg-app-surface-2 text-app-muted hover:text-app-text'
+                          className={`group relative flex h-full cursor-pointer items-center gap-2 px-3 py-2.5 text-sm transition-colors ${activeTabId === tab.id
+                            ? 'text-app-text bg-app-surface-2/50'
+                            : 'text-app-muted hover:text-app-text hover:bg-app-surface-2/30'
                             }`}
+                          onClick={() => setActiveTab(tab.id)}
                         >
-                          <button onClick={() => setActiveTab(tab.id)}>{tab.name}</button>
+                          <span>{tab.name}</span>
                           {tab.isDirty && <span className="text-app-primary">●</span>}
                           <button
-                            onClick={() => handleCloseTab(tab.id)}
-                            className="rounded px-1 text-app-subtle opacity-0 hover:bg-app-surface-3 hover:text-app-text group-hover:opacity-100"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleCloseTab(tab.id)
+                            }}
+                            className="rounded-[4px] px-1 text-app-subtle opacity-0 transition-opacity hover:bg-app-surface-3 hover:text-app-text group-hover:opacity-100"
                           >
                             ×
                           </button>
+                          {activeTabId === tab.id && (
+                            <div className="absolute bottom-0 left-0 h-[2px] w-full bg-app-text" />
+                          )}
                         </div>
                       ))
                     )}

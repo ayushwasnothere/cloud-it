@@ -58,6 +58,7 @@ interface FileBrowserProps {
   onToggleTerminal?: () => void
   isTerminalVisible?: boolean
   projectName: string
+  projectId: string
 }
 
 interface TreeNode {
@@ -137,11 +138,14 @@ export function FileBrowser({
   onToggleTerminal,
   isTerminalVisible = true,
   projectName,
+  projectId,
 }: FileBrowserProps) {
   const [mode, setMode] = useState<SidebarMode>('explorer')
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const [draftCreate, setDraftCreate] = useState<DraftCreate | null>(null)
   const [isSubmittingCreate, setIsSubmittingCreate] = useState(false)
+  const [clipboard, setClipboard] = useState<{ path: string; action: 'copy' | 'cut' } | null>(null)
+
   const inputRef = useRef<HTMLInputElement | null>(null)
 
   const tree = useMemo(() => buildTree(files), [files])
@@ -198,8 +202,10 @@ export function FileBrowser({
         return next
       })
     }
-    setMode('explorer')
-    setDraftCreate({ kind, parentPath, value: '' })
+    setTimeout(() => {
+      setMode('explorer')
+      setDraftCreate({ kind, parentPath, value: '' })
+    }, 10)
   }
 
   const cancelCreate = () => {
@@ -314,7 +320,7 @@ export function FileBrowser({
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7 rounded-[4px] text-app-muted hover:bg-app-surface-3 hover:text-app-text"
+              className="h-7 w-7 rounded-[4px] text-app-muted hover:bg-app-surface-2 hover:text-app-text"
             >
               <Menu className="h-4 w-4" />
             </Button>
@@ -343,7 +349,12 @@ export function FileBrowser({
               Delete File
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-app-border-strong" />
-            <DropdownMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={onToggleTerminal} disabled={!onToggleTerminal}>
+            <DropdownMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={(e) => {
+              e.preventDefault()
+              if (onToggleTerminal) {
+                onToggleTerminal()
+              }
+            }} disabled={!onToggleTerminal}>
               {isTerminalVisible ? 'Hide Terminal' : 'Show Terminal'}
               <DropdownMenuShortcut className="text-app-muted">Ctrl+`</DropdownMenuShortcut>
             </DropdownMenuItem>
@@ -398,7 +409,7 @@ export function FileBrowser({
                 variant="ghost"
                 size="icon"
                 onClick={() => beginCreate('file')}
-                className="h-6 w-6 rounded-[4px] text-app-muted hover:bg-app-surface-3 hover:text-app-text"
+                className="h-6 w-6 rounded-[4px] text-app-muted hover:bg-app-surface-2 hover:text-app-text"
                 title="New File"
               >
                 <FilePlus2 className="h-3.5 w-3.5" />
@@ -407,7 +418,7 @@ export function FileBrowser({
                 variant="ghost"
                 size="icon"
                 onClick={() => beginCreate('directory')}
-                className="h-6 w-6 rounded-[4px] text-app-muted hover:bg-app-surface-3 hover:text-app-text"
+                className="h-6 w-6 rounded-[4px] text-app-muted hover:bg-app-surface-2 hover:text-app-text"
                 title="New Folder"
               >
                 <FolderPlus className="h-3.5 w-3.5" />
@@ -416,7 +427,7 @@ export function FileBrowser({
                 variant="ghost"
                 size="icon"
                 onClick={onRefresh}
-                className="h-6 w-6 rounded-[4px] text-app-muted hover:bg-app-surface-3 hover:text-app-text"
+                className="h-6 w-6 rounded-[4px] text-app-muted hover:bg-app-surface-2 hover:text-app-text"
                 title="Refresh"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
@@ -439,7 +450,7 @@ export function FileBrowser({
                 variant="ghost"
                 size="icon"
                 onClick={collapseAll}
-                className="h-6 w-6 rounded-[4px] text-app-muted hover:bg-app-surface-3 hover:text-app-text"
+                className="h-6 w-6 rounded-[4px] text-app-muted hover:bg-app-surface-2 hover:text-app-text"
                 title="Collapse All"
               >
                 <ChevronsUpDown className="h-3.5 w-3.5" />
@@ -466,17 +477,40 @@ export function FileBrowser({
                 New Folder...
               </ContextMenuItem>
               <ContextMenuSeparator className="bg-app-border-strong" />
-              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={() => toast.info('Cut feature coming soon')}>
+              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={() => {
+                if (activeEntry) setClipboard({ path: activeEntry.path, action: 'cut' })
+              }} disabled={!activeEntry}>
                 <Scissors className="mr-2 h-4 w-4 text-app-muted" />
                 Cut
                 <ContextMenuShortcut>Ctrl+X</ContextMenuShortcut>
               </ContextMenuItem>
-              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={() => toast.info('Copy feature coming soon')}>
+              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={() => {
+                if (activeEntry) setClipboard({ path: activeEntry.path, action: 'copy' })
+              }} disabled={!activeEntry}>
                 <Copy className="mr-2 h-4 w-4 text-app-muted" />
                 Copy
                 <ContextMenuShortcut>Ctrl+C</ContextMenuShortcut>
               </ContextMenuItem>
-              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={() => toast.info('Paste feature coming soon')}>
+              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={async () => {
+                if (!clipboard) return
+                const currentDir = activeEntry?.type === 'directory' ? activeEntry.path : resolveCreateParent()
+                const destPath = joinPath(currentDir, clipboard.path.split('/').pop() || '')
+
+                try {
+                  const { copyProjectFile, renameProjectFile } = await import('@/api/projects')
+                  if (clipboard.action === 'copy') {
+                    await copyProjectFile(projectId, clipboard.path, destPath)
+                    toast.success('Pasted copy')
+                  } else {
+                    await renameProjectFile(projectId, clipboard.path, destPath)
+                    toast.success('Moved successfully')
+                    setClipboard(null)
+                  }
+                  onRefresh()
+                } catch (err: any) {
+                  toast.error(err.message || 'Failed to paste')
+                }
+              }} disabled={!clipboard}>
                 <ClipboardPaste className="mr-2 h-4 w-4 text-app-muted" />
                 Paste
                 <ContextMenuShortcut>Ctrl+V</ContextMenuShortcut>
@@ -497,7 +531,23 @@ export function FileBrowser({
                 <ContextMenuShortcut>Ctrl+K Ctrl+Shift+C</ContextMenuShortcut>
               </ContextMenuItem>
               <ContextMenuSeparator className="bg-app-border-strong" />
-              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={() => toast.info('Rename feature coming soon')} disabled={!activeEntry}>
+              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={() => {
+                if (!activeEntry) return
+                const newName = window.prompt('Enter new name', activeEntry.name)
+                if (!newName || newName === activeEntry.name) return
+
+                const parentDir = dirname(activeEntry.path)
+                const newPath = joinPath(parentDir, newName)
+
+                import('@/api/projects').then(({ renameProjectFile }) => {
+                  renameProjectFile(projectId, activeEntry.path, newPath)
+                    .then(() => {
+                      toast.success('Renamed successfully')
+                      onRefresh()
+                    })
+                    .catch((err) => toast.error(err.message || 'Failed to rename'))
+                })
+              }} disabled={!activeEntry}>
                 <Pencil className="mr-2 h-4 w-4 text-app-muted" />
                 Rename...
                 <ContextMenuShortcut>F2</ContextMenuShortcut>
@@ -516,12 +566,26 @@ export function FileBrowser({
                 <ContextMenuShortcut className="text-app-danger">Shift+Delete</ContextMenuShortcut>
               </ContextMenuItem>
               <ContextMenuSeparator className="bg-app-border-strong" />
-              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={onToggleTerminal} disabled={!onToggleTerminal}>
+              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={(e) => {
+                e.preventDefault()
+                if (onToggleTerminal) {
+                  onToggleTerminal()
+                }
+              }} disabled={!onToggleTerminal}>
                 <TerminalIcon className="mr-2 h-4 w-4 text-app-muted" />
                 Open In Integrated Terminal
               </ContextMenuItem>
               <ContextMenuSeparator className="bg-app-border-strong" />
-              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={() => toast.info('Download feature coming soon')} disabled={!activeEntry}>
+              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={async () => {
+                if (!activeEntry || activeEntry.type === 'directory') return
+                try {
+                  const { downloadProjectArchive } = await import('@/api/projects')
+                  toast.info('Preparing download...')
+                  await downloadProjectArchive(projectId, `${projectName}-${activeEntry.name}`)
+                } catch (err: any) {
+                  toast.error(err.message || 'Failed to download file')
+                }
+              }} disabled={!activeEntry || activeEntry.type === 'directory'}>
                 <Download className="mr-2 h-4 w-4 text-app-muted" />
                 Download
               </ContextMenuItem>

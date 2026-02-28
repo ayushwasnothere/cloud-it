@@ -18,7 +18,8 @@ import {
   ExternalLink,
   Settings,
   Rocket,
-  Users
+  Users,
+  Download
 } from 'lucide-react'
 import { STATUS_COLORS } from '@/utils/constants'
 import { useDebouncedCallback } from '@/hooks/useDebounce'
@@ -96,7 +97,7 @@ export function TopBar({
             disabled={isLoading || isTransitioning}
             variant="outline"
             size="sm"
-            className="border-app-border bg-app-surface-2 text-app-text hover:bg-app-surface-3 hover:text-app-text"
+            className="border-app-border bg-app-surface-2 text-app-text hover:bg-app-surface-2 hover:text-app-text"
           >
             {loadingAction === 'stop' ? (
               <Spinner className="mr-2 size-4" />
@@ -126,7 +127,7 @@ export function TopBar({
           disabled={!previewUrl || isTransitioning}
           variant="outline"
           size="sm"
-          className="border-app-border bg-app-surface-2 text-app-text hover:bg-app-surface-3 hover:text-app-text disabled:opacity-50"
+          className="border-app-border bg-app-surface-2 text-app-text hover:bg-app-surface-2 hover:text-app-text disabled:opacity-50"
         >
           <ExternalLink className="w-4 h-4 mr-2" />
           Preview
@@ -135,7 +136,7 @@ export function TopBar({
         <Button
           variant="outline"
           size="sm"
-          className="border-app-border bg-app-surface-2 text-app-text hover:bg-app-surface-3 hover:text-app-text"
+          className="border-app-border bg-app-surface-2 text-app-text hover:bg-app-surface-2 hover:text-app-text"
           onClick={() => toast.info('Share feature coming soon')}
         >
           <Users className="w-4 h-4 mr-2" />
@@ -156,16 +157,33 @@ export function TopBar({
             <Button
               variant="outline"
               size="icon"
-              className="border-app-border bg-app-surface-2 text-app-text hover:bg-app-surface-3 hover:text-app-text ml-2 h-8 w-8"
+              className="border-app-border bg-app-surface-2 text-app-text hover:bg-app-surface-2 hover:text-app-text ml-2 h-8 w-8"
             >
               <Settings className="w-4 h-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuContent align="end" className="w-48 bg-app-surface-2 border-app-border text-app-text">
+            <DropdownMenuItem
+              onClick={async () => {
+                try {
+                  const { downloadProjectArchive } = await import('@/api/projects')
+                  toast.info('Zipping project...')
+                  await downloadProjectArchive(project.id, project.name)
+                  toast.success('Download started')
+                } catch (err: any) {
+                  toast.error(err.message || 'Failed to download project')
+                }
+              }}
+              className="cursor-pointer focus:bg-app-surface-3"
+            >
+              <Download className="w-4 h-4 mr-2 text-app-muted" />
+              Download ZIP
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-app-border-strong" />
             <DropdownMenuItem
               onClick={onDelete}
               variant="destructive"
-              className="cursor-pointer"
+              className="cursor-pointer text-app-danger focus:text-app-danger focus:bg-app-danger/10"
             >
               <Trash2 className="w-4 h-4 mr-2" />
               Delete Project
