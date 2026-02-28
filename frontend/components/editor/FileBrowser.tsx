@@ -13,6 +13,13 @@ import {
   FolderPlus,
   RefreshCw,
   ChevronsUpDown,
+  Trash2,
+  Copy,
+  Download,
+  Terminal as TerminalIcon,
+  Pencil,
+  Scissors,
+  ClipboardPaste,
 } from 'lucide-react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Button } from '@/components/ui/button'
@@ -25,6 +32,15 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuShortcut,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu'
+import { toast } from 'sonner'
 import type { ProjectFileEntry } from '@/api/projects'
 
 type SidebarMode = 'explorer' | 'search' | 'extensions'
@@ -340,7 +356,7 @@ export function FileBrowser({
             size="icon"
             onClick={() => setMode('explorer')}
             className={cn(
-              'h-7 w-7 rounded-[4px] hover:bg-app-surface-3',
+              'h-7 w-7 rounded-[4px] hover:bg-app-surface-2',
               mode === 'explorer' ? 'text-app-text' : 'text-app-subtle'
             )}
           >
@@ -351,7 +367,7 @@ export function FileBrowser({
             size="icon"
             onClick={() => setMode('search')}
             className={cn(
-              'h-7 w-7 rounded-[4px] hover:bg-app-surface-3',
+              'h-7 w-7 rounded-[4px] hover:bg-app-surface-2',
               mode === 'search' ? 'text-app-text' : 'text-app-subtle'
             )}
           >
@@ -362,7 +378,7 @@ export function FileBrowser({
             size="icon"
             onClick={() => setMode('extensions')}
             className={cn(
-              'h-7 w-7 rounded-[4px] hover:bg-app-surface-3',
+              'h-7 w-7 rounded-[4px] hover:bg-app-surface-2',
               mode === 'extensions' ? 'text-app-text' : 'text-app-subtle'
             )}
           >
@@ -408,6 +424,20 @@ export function FileBrowser({
               <Button
                 variant="ghost"
                 size="icon"
+                onClick={() => {
+                  if (activeEntry?.type === 'file') {
+                    onDeleteFile(activeEntry.path)
+                  }
+                }}
+                disabled={!canDeleteActiveFile}
+                className="h-6 w-6 rounded-[4px] text-app-muted hover:bg-app-danger/20 hover:text-app-danger disabled:opacity-50"
+                title="Delete Action"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={collapseAll}
                 className="h-6 w-6 rounded-[4px] text-app-muted hover:bg-app-surface-3 hover:text-app-text"
                 title="Collapse All"
@@ -417,12 +447,86 @@ export function FileBrowser({
             </div>
           </div>
 
-          <ScrollArea className="flex-1">
-            <div className="py-1">
-              {draftCreate?.parentPath === '' ? renderCreateRow(0) : null}
-              {tree.map((node) => renderNode(node, 0))}
-            </div>
-          </ScrollArea>
+          <ContextMenu>
+            <ContextMenuTrigger asChild>
+              <ScrollArea className="flex-1">
+                <div className="py-1 min-h-full">
+                  {draftCreate?.parentPath === '' ? renderCreateRow(0) : null}
+                  {tree.map((node) => renderNode(node, 0))}
+                </div>
+              </ScrollArea>
+            </ContextMenuTrigger>
+            <ContextMenuContent className="w-64 border-app-border bg-app-surface-2 text-app-text">
+              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={() => beginCreate('file')}>
+                <FilePlus2 className="mr-2 h-4 w-4 text-app-muted" />
+                New File...
+              </ContextMenuItem>
+              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={() => beginCreate('directory')}>
+                <FolderPlus className="mr-2 h-4 w-4 text-app-muted" />
+                New Folder...
+              </ContextMenuItem>
+              <ContextMenuSeparator className="bg-app-border-strong" />
+              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={() => toast.info('Cut feature coming soon')}>
+                <Scissors className="mr-2 h-4 w-4 text-app-muted" />
+                Cut
+                <ContextMenuShortcut>Ctrl+X</ContextMenuShortcut>
+              </ContextMenuItem>
+              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={() => toast.info('Copy feature coming soon')}>
+                <Copy className="mr-2 h-4 w-4 text-app-muted" />
+                Copy
+                <ContextMenuShortcut>Ctrl+C</ContextMenuShortcut>
+              </ContextMenuItem>
+              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={() => toast.info('Paste feature coming soon')}>
+                <ClipboardPaste className="mr-2 h-4 w-4 text-app-muted" />
+                Paste
+                <ContextMenuShortcut>Ctrl+V</ContextMenuShortcut>
+              </ContextMenuItem>
+              <ContextMenuSeparator className="bg-app-border-strong" />
+              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={() => {
+                toast.info('Filename copied')
+                activeEntry && navigator.clipboard.writeText(activeEntry.path)
+              }} disabled={!activeEntry}>
+                Copy Path
+                <ContextMenuShortcut>Shift+Alt+C</ContextMenuShortcut>
+              </ContextMenuItem>
+              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={() => {
+                toast.info('Relative Path copied')
+                activeEntry && navigator.clipboard.writeText(activeEntry.path)
+              }} disabled={!activeEntry}>
+                Copy Relative Path
+                <ContextMenuShortcut>Ctrl+K Ctrl+Shift+C</ContextMenuShortcut>
+              </ContextMenuItem>
+              <ContextMenuSeparator className="bg-app-border-strong" />
+              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={() => toast.info('Rename feature coming soon')} disabled={!activeEntry}>
+                <Pencil className="mr-2 h-4 w-4 text-app-muted" />
+                Rename...
+                <ContextMenuShortcut>F2</ContextMenuShortcut>
+              </ContextMenuItem>
+              <ContextMenuItem
+                className="focus:bg-app-surface-3 cursor-pointer text-app-danger focus:text-app-danger"
+                onSelect={() => {
+                  if (activeEntry?.type === 'file') {
+                    onDeleteFile(activeEntry.path)
+                  }
+                }}
+                disabled={!canDeleteActiveFile}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete Permanently
+                <ContextMenuShortcut className="text-app-danger">Shift+Delete</ContextMenuShortcut>
+              </ContextMenuItem>
+              <ContextMenuSeparator className="bg-app-border-strong" />
+              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={onToggleTerminal} disabled={!onToggleTerminal}>
+                <TerminalIcon className="mr-2 h-4 w-4 text-app-muted" />
+                Open In Integrated Terminal
+              </ContextMenuItem>
+              <ContextMenuSeparator className="bg-app-border-strong" />
+              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={() => toast.info('Download feature coming soon')} disabled={!activeEntry}>
+                <Download className="mr-2 h-4 w-4 text-app-muted" />
+                Download
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
         </>
       )}
 

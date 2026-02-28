@@ -48,7 +48,7 @@ export function ProjectCard({ project, onDelete, isDeleting }: ProjectCardProps)
 
         <div className="flex gap-2">
           <Link href={`/projects/${project.id}`} className="flex-1">
-            <Button className="w-full bg-app-primary hover:bg-app-primary-hover text-white">
+            <Button className="w-full bg-app-primary hover:bg-app-primary-hover text-black font-medium border border-transparent">
               Open IDE
             </Button>
           </Link>

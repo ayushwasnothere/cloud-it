@@ -51,18 +51,18 @@ export function XTermComponent({
         fontFamily: 'Menlo, Monaco, "Courier New", monospace',
         convertEol: true,
         theme: {
-          background: '#0b1118',
-          foreground: '#eef4ff',
-          cursor: '#eef4ff',
-          black: '#0b1118',
+          background: '#000000',
+          foreground: '#ededed',
+          cursor: '#ededed',
+          black: '#000000',
           red: '#ef4444',
           green: '#22c55e',
           yellow: '#f59e0b',
-          blue: '#3b82f6',
+          blue: '#ededed',
           magenta: '#a855f7',
           cyan: '#06b6d4',
-          white: '#eef4ff',
-          brightBlack: '#7e8ea7',
+          white: '#ededed',
+          brightBlack: '#333333',
           brightRed: '#f87171',
           brightGreen: '#4ade80',
           brightYellow: '#fbbf24',
@@ -157,7 +157,7 @@ export function XTermComponent({
       ref={terminalRef}
       className="h-full w-full"
       style={{
-        background: '#0b1118',
+        background: '#000000',
         overflow: 'hidden',
       }}
     />

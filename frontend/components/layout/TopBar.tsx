@@ -110,7 +110,7 @@ export function TopBar({
             onClick={() => debouncedStart()}
             disabled={isLoading || isTransitioning}
             size="sm"
-            className="bg-app-success hover:bg-app-success-hover text-white"
+            className="bg-app-success hover:bg-app-success-hover text-black font-medium"
           >
             {loadingAction === 'start' ? (
               <Spinner className="mr-2 size-4" />
@@ -144,7 +144,7 @@ export function TopBar({
 
         <Button
           size="sm"
-          className="bg-app-primary hover:bg-app-primary-hover text-white"
+          className="bg-app-primary hover:bg-app-primary-hover text-black font-medium border border-transparent"
           onClick={() => toast.info('Deploy feature coming soon')}
         >
           <Rocket className="w-4 h-4 mr-2" />

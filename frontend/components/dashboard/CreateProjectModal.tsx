@@ -114,7 +114,7 @@ export function CreateProjectModal({
             <Button
               onClick={handleCreate}
               disabled={isLoading}
-              className="bg-app-primary hover:bg-app-primary-hover text-white"
+              className="bg-app-primary hover:bg-app-primary-hover text-black font-medium border border-transparent"
             >
               {isLoading ? (
                 <div className="flex items-center gap-2">

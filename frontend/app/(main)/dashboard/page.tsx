@@ -101,7 +101,7 @@ export default function DashboardPage() {
             </div>
             <Button
               onClick={() => setCreateModalOpen(true)}
-              className="bg-app-primary hover:bg-app-primary-hover text-white"
+              className="bg-app-primary hover:bg-app-primary-hover text-black font-medium border border-transparent"
             >
               <Plus className="w-4 h-4 mr-2" />
               New Project
@@ -119,7 +119,7 @@ export default function DashboardPage() {
               <p className="text-app-muted mb-4">No projects yet</p>
               <Button
                 onClick={() => setCreateModalOpen(true)}
-                className="bg-app-primary hover:bg-app-primary-hover text-white"
+                className="bg-app-primary hover:bg-app-primary-hover text-black font-medium border border-transparent"
               >
                 Create Your First Project
               </Button>
