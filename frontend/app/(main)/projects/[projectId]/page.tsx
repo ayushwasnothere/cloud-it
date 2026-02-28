@@ -392,11 +392,10 @@ export default function ProjectPage() {
                           tabs.map((tab) => (
                             <div
                               key={tab.id}
-                              className={`group flex items-center gap-2 border-r border-app-border px-3 py-2 text-xs transition-colors ${
-                                activeTabId === tab.id
+                              className={`group flex items-center gap-2 border-r border-app-border px-3 py-2 text-xs transition-colors ${activeTabId === tab.id
                                   ? 'bg-app-editor-bg text-app-text'
                                   : 'bg-app-surface-2 text-app-muted hover:text-app-text'
-                              }`}
+                                }`}
                             >
                               <button onClick={() => setActiveTab(tab.id)}>{tab.name}</button>
                               {tab.isDirty && <span className="text-app-primary">●</span>}
@@ -473,11 +472,10 @@ export default function ProjectPage() {
                       tabs.map((tab) => (
                         <div
                           key={tab.id}
-                          className={`group flex items-center gap-2 border-r border-app-border px-3 py-2 text-xs transition-colors ${
-                            activeTabId === tab.id
+                          className={`group flex items-center gap-2 border-r border-app-border px-3 py-2 text-xs transition-colors ${activeTabId === tab.id
                               ? 'bg-app-editor-bg text-app-text'
                               : 'bg-app-surface-2 text-app-muted hover:text-app-text'
-                          }`}
+                            }`}
                         >
                           <button onClick={() => setActiveTab(tab.id)}>{tab.name}</button>
                           {tab.isDirty && <span className="text-app-primary">●</span>}
@@ -546,7 +544,7 @@ export default function ProjectPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="flex justify-end gap-2 pt-4">
-            <AlertDialogCancel className="border-app-border text-app-text hover:bg-app-surface-2">
+            <AlertDialogCancel className="bg-transparent border-app-border text-app-text hover:bg-app-surface-2 hover:text-app-text">
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-app-danger text-white hover:bg-app-danger-hover">

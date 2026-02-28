@@ -109,33 +109,33 @@ export default function DashboardPage() {
           </div>
 
           {isLoading ? (
-  <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-    {[...Array(3)].map((_, i) => (
-      <Skeleton key={i} className="h-48 bg-app-surface-2" />
-    ))}
-  </div>
-) : projects.length === 0 ? (
-  <div className="text-center py-12">
-    <p className="text-app-muted mb-4">No projects yet</p>
-    <Button
-      onClick={() => setCreateModalOpen(true)}
-      className="bg-app-primary hover:bg-app-primary-hover text-white"
-    >
-      Create Your First Project
-    </Button>
-  </div>
-) : (
-  <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-    {projects.map((project) => (
-      <ProjectCard
-        key={project.id}
-        project={project}
-        onDelete={(id) => setDeleteConfirm(id)}
-        isDeleting={isDeleting}
-      />
-    ))}
-  </div>
-)}
+            <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              {[...Array(3)].map((_, i) => (
+                <Skeleton key={i} className="h-48 bg-app-surface-2" />
+              ))}
+            </div>
+          ) : projects.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-app-muted mb-4">No projects yet</p>
+              <Button
+                onClick={() => setCreateModalOpen(true)}
+                className="bg-app-primary hover:bg-app-primary-hover text-white"
+              >
+                Create Your First Project
+              </Button>
+            </div>
+          ) : (
+            <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              {projects.map((project) => (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  onDelete={(id) => setDeleteConfirm(id)}
+                  isDeleting={isDeleting}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </main>
 
@@ -159,7 +159,7 @@ export default function DashboardPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="flex gap-2 justify-end pt-4">
-            <AlertDialogCancel className="border-app-border text-app-text hover:bg-app-surface-2">
+            <AlertDialogCancel className="bg-transparent border-app-border text-app-text hover:bg-app-surface-2 hover:text-app-text">
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction

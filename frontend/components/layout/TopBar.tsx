@@ -11,10 +11,19 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
 import { Spinner } from '@/components/ui/spinner'
-import { ChevronDown, Play, Square, Trash2, LogOut, ExternalLink } from 'lucide-react'
+import {
+  Play,
+  Square,
+  Trash2,
+  ExternalLink,
+  Settings,
+  Rocket,
+  Users
+} from 'lucide-react'
 import { STATUS_COLORS } from '@/utils/constants'
 import { useDebouncedCallback } from '@/hooks/useDebounce'
 import Link from 'next/link'
+import { toast } from 'sonner'
 
 interface TopBarProps {
   project: Project
@@ -123,32 +132,43 @@ export function TopBar({
           Preview
         </Button>
 
+        <Button
+          variant="outline"
+          size="sm"
+          className="border-app-border bg-app-surface-2 text-app-text hover:bg-app-surface-3 hover:text-app-text"
+          onClick={() => toast.info('Share feature coming soon')}
+        >
+          <Users className="w-4 h-4 mr-2" />
+          Share
+        </Button>
+
+        <Button
+          size="sm"
+          className="bg-app-primary hover:bg-app-primary-hover text-white"
+          onClick={() => toast.info('Deploy feature coming soon')}
+        >
+          <Rocket className="w-4 h-4 mr-2" />
+          Deploy
+        </Button>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
-              size="sm"
-              className="border-app-border bg-app-surface-2 text-app-text hover:bg-app-surface-3 hover:text-app-text"
+              size="icon"
+              className="border-app-border bg-app-surface-2 text-app-text hover:bg-app-surface-3 hover:text-app-text ml-2 h-8 w-8"
             >
-              <ChevronDown className="w-4 h-4" />
+              <Settings className="w-4 h-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-app-surface-2 border-app-border">
+          <DropdownMenuContent align="end" className="w-48">
             <DropdownMenuItem
               onClick={onDelete}
               variant="destructive"
-              className="cursor-pointer data-[highlighted]:bg-app-danger-soft data-[highlighted]:text-app-danger"
+              className="cursor-pointer"
             >
               <Trash2 className="w-4 h-4 mr-2" />
               Delete Project
-            </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-app-border" />
-            <DropdownMenuItem
-              onClick={onLogout}
-              className="text-app-muted focus:bg-app-border cursor-pointer"
-            >
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

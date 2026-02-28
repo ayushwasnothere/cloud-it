@@ -107,7 +107,7 @@ export function CreateProjectModal({
               variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={isLoading}
-              className="border-app-border"
+              className="bg-transparent border-app-border text-app-text hover:bg-app-surface-2 hover:text-app-text"
             >
               Cancel
             </Button>

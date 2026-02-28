@@ -23,9 +23,6 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import type { ProjectFileEntry } from '@/api/projects'
@@ -307,112 +304,33 @@ export function FileBrowser({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-52 border-app-border bg-app-surface-2 text-app-text">
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="text-[14px]">File</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-80 border-app-border bg-app-surface-2 text-app-text">
-                <DropdownMenuItem className="focus:bg-app-surface-3" onSelect={() => beginCreate('file')}>
-                  New File...
-                  <DropdownMenuShortcut className="text-app-muted">Ctrl+Alt+N</DropdownMenuShortcut>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="focus:bg-app-surface-3" onSelect={() => beginCreate('directory')}>
-                  New Folder...
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-app-border-strong" />
-                <DropdownMenuItem disabled className="text-app-subtle">Open File...</DropdownMenuItem>
-                <DropdownMenuItem disabled className="text-app-subtle">Open Folder...</DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-app-border-strong" />
-                <DropdownMenuItem className="focus:bg-app-surface-3" onSelect={onRefresh}>
-                  Refresh Explorer
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="focus:bg-app-surface-3"
-                  onSelect={() => {
-                    if (activeEntry?.type === 'file') {
-                      onDeleteFile(activeEntry.path)
-                    }
-                  }}
-                  disabled={!canDeleteActiveFile}
-                >
-                  Delete File
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="text-[14px]">Edit</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-80 border-app-border bg-app-surface-2 text-app-text">
-                <DropdownMenuItem disabled className="text-app-subtle">Undo</DropdownMenuItem>
-                <DropdownMenuItem disabled className="text-app-subtle">Redo</DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-app-border-strong" />
-                <DropdownMenuItem disabled className="text-app-subtle">Cut</DropdownMenuItem>
-                <DropdownMenuItem disabled className="text-app-subtle">Copy</DropdownMenuItem>
-                <DropdownMenuItem disabled className="text-app-subtle">Paste</DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-app-border-strong" />
-                <DropdownMenuItem disabled className="text-app-subtle">Find</DropdownMenuItem>
-                <DropdownMenuItem disabled className="text-app-subtle">Replace</DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="text-[14px]">Selection</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-72 border-app-border bg-app-surface-2 text-app-text">
-                <DropdownMenuItem disabled className="text-app-subtle">Select All</DropdownMenuItem>
-                <DropdownMenuItem disabled className="text-app-subtle">Expand Selection</DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="text-[14px]">View</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-80 border-app-border bg-app-surface-2 text-app-text">
-                <DropdownMenuItem className="focus:bg-app-surface-3" onSelect={() => setMode('explorer')}>
-                  Explorer
-                  <DropdownMenuShortcut className="text-app-muted">Ctrl+Shift+E</DropdownMenuShortcut>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="focus:bg-app-surface-3" onSelect={() => setMode('search')}>
-                  Search
-                  <DropdownMenuShortcut className="text-app-muted">Ctrl+Shift+F</DropdownMenuShortcut>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="focus:bg-app-surface-3" onSelect={() => setMode('extensions')}>
-                  Extensions
-                  <DropdownMenuShortcut className="text-app-muted">Ctrl+Shift+X</DropdownMenuShortcut>
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="text-[14px]">Go</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-72 border-app-border bg-app-surface-2 text-app-text">
-                <DropdownMenuItem disabled className="text-app-subtle">Go to File...</DropdownMenuItem>
-                <DropdownMenuItem disabled className="text-app-subtle">Go to Symbol...</DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="text-[14px]">Run</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-80 border-app-border bg-app-surface-2 text-app-text">
-                <DropdownMenuItem disabled className="text-app-subtle">Start Debugging</DropdownMenuItem>
-                <DropdownMenuItem disabled className="text-app-subtle">Run Without Debugging</DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="text-[14px]">Terminal</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-80 border-app-border bg-app-surface-2 text-app-text">
-                <DropdownMenuItem className="focus:bg-app-surface-3" onSelect={onToggleTerminal} disabled={!onToggleTerminal}>
-                  {isTerminalVisible ? 'Hide Terminal Panel' : 'Show Terminal Panel'}
-                  <DropdownMenuShortcut className="text-app-muted">Ctrl+`</DropdownMenuShortcut>
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="text-[14px]">Help</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-80 border-app-border bg-app-surface-2 text-app-text">
-                <DropdownMenuItem disabled className="text-app-subtle">Show All Commands</DropdownMenuItem>
-                <DropdownMenuItem disabled className="text-app-subtle">Keyboard Shortcuts Reference</DropdownMenuItem>
-                <DropdownMenuItem disabled className="text-app-subtle">About</DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
+            <DropdownMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={() => beginCreate('file')}>
+              New File...
+              <DropdownMenuShortcut className="text-app-muted">Ctrl+Alt+N</DropdownMenuShortcut>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={() => beginCreate('directory')}>
+              New Folder...
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-app-border-strong" />
+            <DropdownMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={onRefresh}>
+              Refresh Explorer
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="focus:bg-app-surface-3 cursor-pointer"
+              onSelect={() => {
+                if (activeEntry?.type === 'file') {
+                  onDeleteFile(activeEntry.path)
+                }
+              }}
+              disabled={!canDeleteActiveFile}
+            >
+              Delete File
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-app-border-strong" />
+            <DropdownMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={onToggleTerminal} disabled={!onToggleTerminal}>
+              {isTerminalVisible ? 'Hide Terminal' : 'Show Terminal'}
+              <DropdownMenuShortcut className="text-app-muted">Ctrl+`</DropdownMenuShortcut>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
