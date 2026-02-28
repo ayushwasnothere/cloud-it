@@ -339,17 +339,17 @@ export default function ProjectPage() {
 
   if (isLoadingProject || !project) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0f1115]">
+      <div className="flex min-h-screen items-center justify-center bg-app-bg">
         <div className="flex flex-col items-center gap-4">
-          <Spinner className="size-8 text-neutral-300" />
-          <p className="text-sm text-neutral-400">Loading IDE...</p>
+          <Spinner className="size-8 text-app-muted" />
+          <p className="text-sm text-app-muted">Loading IDE...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="flex h-screen flex-col bg-[#1e1e1e] text-neutral-100">
+    <div className="flex h-screen flex-col bg-app-editor-bg text-app-text">
       <TopBar
         project={project}
         onStart={handleStart}
@@ -377,32 +377,32 @@ export default function ProjectPage() {
             />
           </ResizablePanel>
 
-          <ResizableHandle className="hidden bg-[#2a2a2f] hover:bg-[#3b3b42] sm:flex" />
+          <ResizableHandle className="hidden bg-app-border hover:bg-app-border-strong sm:flex" />
 
           <ResizablePanel defaultSize={78} minSize={55}>
             {terminalVisible ? (
               <ResizablePanelGroup direction="vertical">
                 <ResizablePanel defaultSize={70} minSize={40}>
-                  <section className="flex h-full flex-col bg-[#1e1e1e]">
-                    <div className="flex items-center justify-between border-b border-[#2a2a2f] bg-[#252526]">
+                  <section className="flex h-full flex-col bg-app-editor-bg">
+                    <div className="flex items-center justify-between border-b border-app-border bg-app-editor-header">
                       <div className="flex min-w-0 items-center overflow-x-auto">
                         {tabs.length === 0 ? (
-                          <div className="px-3 py-2 text-xs text-neutral-500">No file open</div>
+                          <div className="px-3 py-2 text-xs text-app-subtle">No file open</div>
                         ) : (
                           tabs.map((tab) => (
                             <div
                               key={tab.id}
-                              className={`group flex items-center gap-2 border-r border-[#2a2a2f] px-3 py-2 text-xs transition-colors ${
+                              className={`group flex items-center gap-2 border-r border-app-border px-3 py-2 text-xs transition-colors ${
                                 activeTabId === tab.id
-                                  ? 'bg-[#1e1e1e] text-neutral-100'
-                                  : 'bg-[#2a2a2d] text-neutral-400 hover:text-neutral-200'
+                                  ? 'bg-app-editor-bg text-app-text'
+                                  : 'bg-app-surface-2 text-app-muted hover:text-app-text'
                               }`}
                             >
                               <button onClick={() => setActiveTab(tab.id)}>{tab.name}</button>
-                              {tab.isDirty && <span className="text-[#60a5fa]">●</span>}
+                              {tab.isDirty && <span className="text-app-primary">●</span>}
                               <button
                                 onClick={() => handleCloseTab(tab.id)}
-                                className="rounded px-1 text-neutral-500 opacity-0 hover:bg-[#3a3f4c] hover:text-neutral-200 group-hover:opacity-100"
+                                className="rounded px-1 text-app-subtle opacity-0 hover:bg-app-surface-3 hover:text-app-text group-hover:opacity-100"
                               >
                                 ×
                               </button>
@@ -418,7 +418,7 @@ export default function ProjectPage() {
                           size="sm"
                           onClick={loadProjectFiles}
                           disabled={isLoadingFiles}
-                          className="h-7 gap-1 text-xs text-neutral-300 hover:bg-[#32323a]"
+                          className="h-7 gap-1 text-xs text-app-muted hover:bg-app-surface-3"
                         >
                           <RefreshCcw className={`h-3.5 w-3.5 ${isLoadingFiles ? 'animate-spin' : ''}`} />
                           Refresh
@@ -428,7 +428,7 @@ export default function ProjectPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => setTerminalVisible(false)}
-                          className="h-7 gap-1 text-xs text-neutral-300 hover:bg-[#32323a]"
+                          className="h-7 gap-1 text-xs text-app-muted hover:bg-app-surface-3"
                         >
                           <PanelBottomClose className="h-3.5 w-3.5" />
                           Hide Terminal
@@ -445,7 +445,7 @@ export default function ProjectPage() {
                           onChange={handleEditorChange}
                         />
                       ) : (
-                        <div className="flex h-full items-center justify-center text-sm text-neutral-500">
+                        <div className="flex h-full items-center justify-center text-sm text-app-subtle">
                           Open a file from the Explorer
                         </div>
                       )}
@@ -453,7 +453,7 @@ export default function ProjectPage() {
                   </section>
                 </ResizablePanel>
 
-                <ResizableHandle className="bg-[#2a2a2f] hover:bg-[#3b3b42]" />
+                <ResizableHandle className="bg-app-border hover:bg-app-border-strong" />
 
                 <ResizablePanel defaultSize={30} minSize={15} maxSize={60}>
                   <Terminal
@@ -464,26 +464,26 @@ export default function ProjectPage() {
                 </ResizablePanel>
               </ResizablePanelGroup>
             ) : (
-              <section className="flex h-full flex-col bg-[#1e1e1e]">
-                <div className="flex items-center justify-between border-b border-[#2a2a2f] bg-[#252526]">
+              <section className="flex h-full flex-col bg-app-editor-bg">
+                <div className="flex items-center justify-between border-b border-app-border bg-app-editor-header">
                   <div className="flex min-w-0 items-center overflow-x-auto">
                     {tabs.length === 0 ? (
-                      <div className="px-3 py-2 text-xs text-neutral-500">No file open</div>
+                      <div className="px-3 py-2 text-xs text-app-subtle">No file open</div>
                     ) : (
                       tabs.map((tab) => (
                         <div
                           key={tab.id}
-                          className={`group flex items-center gap-2 border-r border-[#2a2a2f] px-3 py-2 text-xs transition-colors ${
+                          className={`group flex items-center gap-2 border-r border-app-border px-3 py-2 text-xs transition-colors ${
                             activeTabId === tab.id
-                              ? 'bg-[#1e1e1e] text-neutral-100'
-                              : 'bg-[#2a2a2d] text-neutral-400 hover:text-neutral-200'
+                              ? 'bg-app-editor-bg text-app-text'
+                              : 'bg-app-surface-2 text-app-muted hover:text-app-text'
                           }`}
                         >
                           <button onClick={() => setActiveTab(tab.id)}>{tab.name}</button>
-                          {tab.isDirty && <span className="text-[#60a5fa]">●</span>}
+                          {tab.isDirty && <span className="text-app-primary">●</span>}
                           <button
                             onClick={() => handleCloseTab(tab.id)}
-                            className="rounded px-1 text-neutral-500 opacity-0 hover:bg-[#3a3f4c] hover:text-neutral-200 group-hover:opacity-100"
+                            className="rounded px-1 text-app-subtle opacity-0 hover:bg-app-surface-3 hover:text-app-text group-hover:opacity-100"
                           >
                             ×
                           </button>
@@ -499,7 +499,7 @@ export default function ProjectPage() {
                       size="sm"
                       onClick={loadProjectFiles}
                       disabled={isLoadingFiles}
-                      className="h-7 gap-1 text-xs text-neutral-300 hover:bg-[#32323a]"
+                      className="h-7 gap-1 text-xs text-app-muted hover:bg-app-surface-3"
                     >
                       <RefreshCcw className={`h-3.5 w-3.5 ${isLoadingFiles ? 'animate-spin' : ''}`} />
                       Refresh
@@ -509,7 +509,7 @@ export default function ProjectPage() {
                       variant="ghost"
                       size="sm"
                       onClick={() => setTerminalVisible(true)}
-                      className="h-7 gap-1 text-xs text-neutral-300 hover:bg-[#32323a]"
+                      className="h-7 gap-1 text-xs text-app-muted hover:bg-app-surface-3"
                     >
                       <PanelBottomOpen className="h-3.5 w-3.5" />
                       Open Terminal
@@ -526,7 +526,7 @@ export default function ProjectPage() {
                       onChange={handleEditorChange}
                     />
                   ) : (
-                    <div className="flex h-full items-center justify-center text-sm text-neutral-500">
+                    <div className="flex h-full items-center justify-center text-sm text-app-subtle">
                       Open a file from the Explorer
                     </div>
                   )}
@@ -538,18 +538,18 @@ export default function ProjectPage() {
       </div>
 
       <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
-        <AlertDialogContent className="border-[#2a2a2f] bg-[#17181d]">
+        <AlertDialogContent className="border-app-border bg-app-surface">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-neutral-50">Delete Project?</AlertDialogTitle>
-            <AlertDialogDescription className="text-neutral-400">
+            <AlertDialogTitle className="text-app-text">Delete Project?</AlertDialogTitle>
+            <AlertDialogDescription className="text-app-muted">
               This action cannot be undone. All files and data will be permanently deleted.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="flex justify-end gap-2 pt-4">
-            <AlertDialogCancel className="border-neutral-700 text-neutral-100 hover:bg-neutral-800">
+            <AlertDialogCancel className="border-app-border text-app-text hover:bg-app-surface-2">
               Cancel
             </AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-600 text-white hover:bg-red-700">
+            <AlertDialogAction onClick={handleDelete} className="bg-app-danger text-white hover:bg-app-danger-hover">
               Delete
             </AlertDialogAction>
           </div>

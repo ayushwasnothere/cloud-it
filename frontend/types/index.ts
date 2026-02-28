@@ -32,6 +32,12 @@ export interface Project {
   runtime: string
   status: 'running' | 'stopped' | 'starting' | 'stopping'
   createdAt: string
+  preview?: {
+    available: boolean
+    url: string | null
+    port: number
+    hostPort: number | null
+  }
   container?: {
     id: string
     port: number
@@ -113,5 +119,4 @@ export interface WSMessage {
 
 // Status Types
 export type ProjectStatus = 'running' | 'stopped' | 'starting' | 'stopping' | 'error'
-
 

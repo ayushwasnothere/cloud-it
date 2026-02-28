@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
 import { Spinner } from '@/components/ui/spinner'
-import { ChevronDown, Play, Square, Trash2, LogOut } from 'lucide-react'
+import { ChevronDown, Play, Square, Trash2, LogOut, ExternalLink } from 'lucide-react'
 import { STATUS_COLORS } from '@/utils/constants'
 import { useDebouncedCallback } from '@/hooks/useDebounce'
 import Link from 'next/link'
@@ -38,21 +38,22 @@ export function TopBar({
   const statusColor = STATUS_COLORS[project.status as keyof typeof STATUS_COLORS]
   const isRunning = project.status === 'running'
   const isTransitioning = project.status === 'starting' || project.status === 'stopping'
+  const previewUrl = project.preview?.url ?? null
 
   const debouncedStart = useDebouncedCallback(onStart, 300)
   const debouncedStop = useDebouncedCallback(onStop, 300)
 
   return (
-    <header className="bg-neutral-900 border-b border-neutral-800 px-4 sm:px-6 py-3 flex items-center justify-between">
+    <header className="bg-app-surface border-b border-app-border px-4 sm:px-6 py-3 flex items-center justify-between">
       <div className="flex items-center gap-4">
         <Link href="/dashboard" className="hover:opacity-80 transition-opacity">
-          <h1 className="text-lg font-semibold text-neutral-50">Cloud IDE</h1>
+          <h1 className="text-lg font-semibold text-app-text">Cloud IDE</h1>
         </Link>
-        <div className="h-6 w-px bg-neutral-700" />
+        <div className="h-6 w-px bg-app-border" />
         <div className="flex items-center gap-3">
           <div>
-            <h2 className="text-sm font-medium text-neutral-50">{project.name}</h2>
-            <p className="text-xs text-neutral-400">{project.runtime}</p>
+            <h2 className="text-sm font-medium text-app-text">{project.name}</h2>
+            <p className="text-xs text-app-muted">{project.runtime}</p>
           </div>
           <Badge
             className="ml-2"
@@ -86,7 +87,7 @@ export function TopBar({
             disabled={isLoading || isTransitioning}
             variant="outline"
             size="sm"
-            className="border-[#3a3c44] bg-[#21232a] text-neutral-100 hover:bg-[#2b2d35] hover:text-white"
+            className="border-app-border bg-app-surface-2 text-app-text hover:bg-app-surface-3 hover:text-app-text"
           >
             {loadingAction === 'stop' ? (
               <Spinner className="mr-2 size-4" />
@@ -100,7 +101,7 @@ export function TopBar({
             onClick={() => debouncedStart()}
             disabled={isLoading || isTransitioning}
             size="sm"
-            className="bg-green-600 hover:bg-green-700 text-white"
+            className="bg-app-success hover:bg-app-success-hover text-white"
           >
             {loadingAction === 'start' ? (
               <Spinner className="mr-2 size-4" />
@@ -111,28 +112,40 @@ export function TopBar({
           </Button>
         )}
 
+        <Button
+          onClick={() => previewUrl && window.open(previewUrl, '_blank', 'noopener,noreferrer')}
+          disabled={!previewUrl || isTransitioning}
+          variant="outline"
+          size="sm"
+          className="border-app-border bg-app-surface-2 text-app-text hover:bg-app-surface-3 hover:text-app-text disabled:opacity-50"
+        >
+          <ExternalLink className="w-4 h-4 mr-2" />
+          Preview
+        </Button>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
               size="sm"
-              className="border-[#3a3c44] bg-[#21232a] text-neutral-100 hover:bg-[#2b2d35] hover:text-white"
+              className="border-app-border bg-app-surface-2 text-app-text hover:bg-app-surface-3 hover:text-app-text"
             >
               <ChevronDown className="w-4 h-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-neutral-800 border-neutral-700">
+          <DropdownMenuContent align="end" className="bg-app-surface-2 border-app-border">
             <DropdownMenuItem
               onClick={onDelete}
-              className="text-red-400 focus:bg-red-900/20 cursor-pointer"
+              variant="destructive"
+              className="cursor-pointer data-[highlighted]:bg-app-danger-soft data-[highlighted]:text-app-danger"
             >
               <Trash2 className="w-4 h-4 mr-2" />
               Delete Project
             </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-neutral-700" />
+            <DropdownMenuSeparator className="bg-app-border" />
             <DropdownMenuItem
               onClick={onLogout}
-              className="text-neutral-300 focus:bg-neutral-700 cursor-pointer"
+              className="text-app-muted focus:bg-app-border cursor-pointer"
             >
               <LogOut className="w-4 h-4 mr-2" />
               Logout

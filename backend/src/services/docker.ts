@@ -22,6 +22,8 @@ const PID_LIMIT = 128;
 const IDLE_TIMEOUT = 30 * 60 * 1000;
 const SANDBOX_NETWORK_MODE = process.env.SANDBOX_NETWORK_MODE || 'bridge';
 const ALLOWED_NETWORK_MODES = new Set(['none', 'bridge', 'host']);
+const SANDBOX_PREVIEW_PORT = Number(process.env.SANDBOX_PREVIEW_PORT || 3000);
+const PREVIEW_PORT_KEY = `${SANDBOX_PREVIEW_PORT}/tcp`;
 
 // Strict UUID v4 pattern — projectId must match before use in any path or name
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -30,6 +32,24 @@ function assertSafeProjectId(projectId: string): void {
   if (!UUID_RE.test(projectId)) {
     throw new Error(`Invalid projectId: ${projectId}`);
   }
+}
+
+function getPublishedPreviewPort(info: Docker.ContainerInspectInfo): string | null {
+  const bindings = info.NetworkSettings?.Ports?.[PREVIEW_PORT_KEY];
+  if (!bindings || bindings.length === 0) return null;
+  return bindings[0]?.HostPort || null;
+}
+
+function hasEnvValue(info: Docker.ContainerInspectInfo, expected: string): boolean {
+  return (info.Config?.Env ?? []).includes(expected);
+}
+
+function requiresContainerRecreate(info: Docker.ContainerInspectInfo): boolean {
+  if (info.HostConfig?.NetworkMode !== SANDBOX_NETWORK_MODE) return true;
+  if (!hasEnvValue(info, 'HOME=/home/sandbox/app')) return true;
+  if (!hasEnvValue(info, 'PIP_CACHE_DIR=/home/sandbox/app/.cache/pip')) return true;
+  if (!hasEnvValue(info, 'PATH=/home/sandbox/app/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin')) return true;
+  return getPublishedPreviewPort(info) === null;
 }
 
 function containerName(projectId: string) {
@@ -73,6 +93,11 @@ async function _getOrCreateContainer(projectId: string, runtime: string): Promis
       `Invalid SANDBOX_NETWORK_MODE: ${SANDBOX_NETWORK_MODE}. Allowed values: none, bridge, host`
     );
   }
+  if (!Number.isInteger(SANDBOX_PREVIEW_PORT) || SANDBOX_PREVIEW_PORT < 1 || SANDBOX_PREVIEW_PORT > 65535) {
+    throw new Error(
+      `Invalid SANDBOX_PREVIEW_PORT: ${process.env.SANDBOX_PREVIEW_PORT}. Must be an integer between 1 and 65535`
+    );
+  }
 
   const name = containerName(projectId);
   const hostPath = safeWorkspacePath(projectId);
@@ -83,12 +108,12 @@ async function _getOrCreateContainer(projectId: string, runtime: string): Promis
     const container = docker.getContainer(name);
     const info = await container.inspect();
 
-    if (info.HostConfig?.NetworkMode !== SANDBOX_NETWORK_MODE) {
+    if (requiresContainerRecreate(info)) {
       if (info.State.Running) {
         await container.stop({ t: 5 });
       }
       await container.remove({ force: true });
-      throw Object.assign(new Error('Recreating container due to network mode change'), { statusCode: 404 });
+      throw Object.assign(new Error('Recreating container due to runtime config change'), { statusCode: 404 });
     }
 
     if (!info.State.Running) {
@@ -108,8 +133,14 @@ async function _getOrCreateContainer(projectId: string, runtime: string): Promis
       AttachStdin: true,
       WorkingDir: '/home/sandbox/app',
       User: 'sandbox',
-      Env: ['HOME=/home/sandbox/app', 'PWD=/home/sandbox/app'],
+      Env: [
+        'HOME=/home/sandbox/app',
+        'PWD=/home/sandbox/app',
+        'PIP_CACHE_DIR=/home/sandbox/app/.cache/pip',
+        'PATH=/home/sandbox/app/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+      ],
       Cmd: ['/bin/sh', '-i'],
+      ExposedPorts: { [PREVIEW_PORT_KEY]: {} },
       HostConfig: {
         Binds: [`${hostPath}:/home/sandbox/app:Z`],
         Memory: MEMORY_LIMIT,
@@ -120,6 +151,9 @@ async function _getOrCreateContainer(projectId: string, runtime: string): Promis
         SecurityOpt: ['no-new-privileges'],
         Tmpfs: { '/tmp': 'size=64m' },
         NetworkMode: SANDBOX_NETWORK_MODE,
+        PortBindings: {
+          [PREVIEW_PORT_KEY]: [{ HostIp: '127.0.0.1', HostPort: '' }],
+        },
         AutoRemove: false,
       },
     });
@@ -186,6 +220,37 @@ export const ContainerManager = {
       return { exists: true, running: info.State.Running };
     } catch (err: any) {
       if (err.statusCode === 404) return { exists: false, running: false };
+      throw err;
+    }
+  },
+
+  async getPreview(projectId: string) {
+    assertSafeProjectId(projectId);
+    await assertDockerSocketAccessible();
+    const name = containerName(projectId);
+    try {
+      const container = docker.getContainer(name);
+      const info = await container.inspect();
+
+      if (!info.State.Running) {
+        return { available: false, url: null, port: SANDBOX_PREVIEW_PORT, hostPort: null };
+      }
+
+      const hostPort = getPublishedPreviewPort(info);
+      if (!hostPort) {
+        return { available: false, url: null, port: SANDBOX_PREVIEW_PORT, hostPort: null };
+      }
+
+      return {
+        available: true,
+        url: `http://127.0.0.1:${hostPort}`,
+        port: SANDBOX_PREVIEW_PORT,
+        hostPort: Number(hostPort),
+      };
+    } catch (err: any) {
+      if (err.statusCode === 404) {
+        return { available: false, url: null, port: SANDBOX_PREVIEW_PORT, hostPort: null };
+      }
       throw err;
     }
   },

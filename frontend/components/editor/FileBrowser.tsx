@@ -221,11 +221,11 @@ export function FileBrowser({
 
     return (
       <div className="px-1 py-0.5" style={{ paddingLeft: `${8 + depth * 14}px` }}>
-        <div className="flex h-[22px] items-center rounded border border-[#d73a49] bg-[#0f1218] px-1">
+        <div className="flex h-[22px] items-center rounded border border-app-danger/60 bg-app-editor-bg px-1">
           {draftCreate.kind === 'directory' ? (
-            <Folder className="mr-1.5 h-3.5 w-3.5 text-[#dcb16d]" />
+            <Folder className="mr-1.5 h-3.5 w-3.5 text-app-warning" />
           ) : (
-            <FileText className="mr-1.5 h-3.5 w-3.5 text-[#9fb7ff]" />
+            <FileText className="mr-1.5 h-3.5 w-3.5 text-app-primary" />
           )}
           <input
             ref={inputRef}
@@ -244,7 +244,7 @@ export function FileBrowser({
                 cancelCreate()
               }
             }}
-            className="h-full w-full bg-transparent text-[13px] text-[#dbe2ea] outline-none"
+            className="h-full w-full bg-transparent text-[13px] text-app-text outline-none"
             placeholder={draftCreate.kind === 'directory' ? 'folder-name' : 'file-name'}
           />
         </div>
@@ -267,12 +267,12 @@ export function FileBrowser({
           className={cn(
             'flex h-[22px] w-full items-center text-left text-[13px] leading-none',
             isActive
-              ? 'bg-[#04395e] text-[#f2f6fb]'
-              : 'text-[#c8d1dc] hover:bg-[#1d242e] hover:text-[#e7edf5]'
+              ? 'bg-app-editor-selection text-app-text'
+              : 'text-app-muted hover:bg-app-surface-2 hover:text-app-text'
           )}
           style={{ paddingLeft: `${8 + depth * 14}px` }}
         >
-          <span className="mr-1 flex h-4 w-4 items-center justify-center text-[#9ca6b3]">
+          <span className="mr-1 flex h-4 w-4 items-center justify-center text-app-subtle">
             {isDir ? (
               isExpanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />
             ) : (
@@ -280,9 +280,9 @@ export function FileBrowser({
             )}
           </span>
           {isDir ? (
-            <Folder className="mr-1.5 h-3.5 w-3.5 text-[#dcb16d]" />
+            <Folder className="mr-1.5 h-3.5 w-3.5 text-app-warning" />
           ) : (
-            <FileText className="mr-1.5 h-3.5 w-3.5 text-[#9fb7ff]" />
+            <FileText className="mr-1.5 h-3.5 w-3.5 text-app-primary" />
           )}
           <span className="truncate">{node.name}</span>
         </button>
@@ -294,38 +294,38 @@ export function FileBrowser({
   }
 
   return (
-    <aside className="flex h-full flex-col border-r border-[#1b1f23] bg-[#0a0a0a] text-[#d1d5da]">
-      <div className="flex h-9 items-center border-b border-[#1b1f23] px-2">
+    <aside className="flex h-full flex-col border-r border-app-border bg-app-editor-bg text-app-muted">
+      <div className="flex h-9 items-center border-b border-app-border px-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7 rounded-[4px] text-[#c9d1d9] hover:bg-[#2d3642] hover:text-white"
+              className="h-7 w-7 rounded-[4px] text-app-muted hover:bg-app-surface-3 hover:text-app-text"
             >
               <Menu className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-52 border-[#2a323d] bg-[#303a46] text-[#dbe2ea]">
+          <DropdownMenuContent className="w-52 border-app-border bg-app-surface-2 text-app-text">
             <DropdownMenuSub>
               <DropdownMenuSubTrigger className="text-[14px]">File</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-80 border-[#2a323d] bg-[#303a46] text-[#dbe2ea]">
-                <DropdownMenuItem className="focus:bg-[#3a4654]" onSelect={() => beginCreate('file')}>
+              <DropdownMenuSubContent className="w-80 border-app-border bg-app-surface-2 text-app-text">
+                <DropdownMenuItem className="focus:bg-app-surface-3" onSelect={() => beginCreate('file')}>
                   New File...
-                  <DropdownMenuShortcut className="text-[#b9c4d1]">Ctrl+Alt+N</DropdownMenuShortcut>
+                  <DropdownMenuShortcut className="text-app-muted">Ctrl+Alt+N</DropdownMenuShortcut>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="focus:bg-[#3a4654]" onSelect={() => beginCreate('directory')}>
+                <DropdownMenuItem className="focus:bg-app-surface-3" onSelect={() => beginCreate('directory')}>
                   New Folder...
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-[#465161]" />
-                <DropdownMenuItem disabled className="text-[#9aa7b5]">Open File...</DropdownMenuItem>
-                <DropdownMenuItem disabled className="text-[#9aa7b5]">Open Folder...</DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-[#465161]" />
-                <DropdownMenuItem className="focus:bg-[#3a4654]" onSelect={onRefresh}>
+                <DropdownMenuSeparator className="bg-app-border-strong" />
+                <DropdownMenuItem disabled className="text-app-subtle">Open File...</DropdownMenuItem>
+                <DropdownMenuItem disabled className="text-app-subtle">Open Folder...</DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-app-border-strong" />
+                <DropdownMenuItem className="focus:bg-app-surface-3" onSelect={onRefresh}>
                   Refresh Explorer
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className="focus:bg-[#3a4654]"
+                  className="focus:bg-app-surface-3"
                   onSelect={() => {
                     if (activeEntry?.type === 'file') {
                       onDeleteFile(activeEntry.path)
@@ -340,77 +340,77 @@ export function FileBrowser({
 
             <DropdownMenuSub>
               <DropdownMenuSubTrigger className="text-[14px]">Edit</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-80 border-[#2a323d] bg-[#303a46] text-[#dbe2ea]">
-                <DropdownMenuItem disabled className="text-[#9aa7b5]">Undo</DropdownMenuItem>
-                <DropdownMenuItem disabled className="text-[#9aa7b5]">Redo</DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-[#465161]" />
-                <DropdownMenuItem disabled className="text-[#9aa7b5]">Cut</DropdownMenuItem>
-                <DropdownMenuItem disabled className="text-[#9aa7b5]">Copy</DropdownMenuItem>
-                <DropdownMenuItem disabled className="text-[#9aa7b5]">Paste</DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-[#465161]" />
-                <DropdownMenuItem disabled className="text-[#9aa7b5]">Find</DropdownMenuItem>
-                <DropdownMenuItem disabled className="text-[#9aa7b5]">Replace</DropdownMenuItem>
+              <DropdownMenuSubContent className="w-80 border-app-border bg-app-surface-2 text-app-text">
+                <DropdownMenuItem disabled className="text-app-subtle">Undo</DropdownMenuItem>
+                <DropdownMenuItem disabled className="text-app-subtle">Redo</DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-app-border-strong" />
+                <DropdownMenuItem disabled className="text-app-subtle">Cut</DropdownMenuItem>
+                <DropdownMenuItem disabled className="text-app-subtle">Copy</DropdownMenuItem>
+                <DropdownMenuItem disabled className="text-app-subtle">Paste</DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-app-border-strong" />
+                <DropdownMenuItem disabled className="text-app-subtle">Find</DropdownMenuItem>
+                <DropdownMenuItem disabled className="text-app-subtle">Replace</DropdownMenuItem>
               </DropdownMenuSubContent>
             </DropdownMenuSub>
 
             <DropdownMenuSub>
               <DropdownMenuSubTrigger className="text-[14px]">Selection</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-72 border-[#2a323d] bg-[#303a46] text-[#dbe2ea]">
-                <DropdownMenuItem disabled className="text-[#9aa7b5]">Select All</DropdownMenuItem>
-                <DropdownMenuItem disabled className="text-[#9aa7b5]">Expand Selection</DropdownMenuItem>
+              <DropdownMenuSubContent className="w-72 border-app-border bg-app-surface-2 text-app-text">
+                <DropdownMenuItem disabled className="text-app-subtle">Select All</DropdownMenuItem>
+                <DropdownMenuItem disabled className="text-app-subtle">Expand Selection</DropdownMenuItem>
               </DropdownMenuSubContent>
             </DropdownMenuSub>
 
             <DropdownMenuSub>
               <DropdownMenuSubTrigger className="text-[14px]">View</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-80 border-[#2a323d] bg-[#303a46] text-[#dbe2ea]">
-                <DropdownMenuItem className="focus:bg-[#3a4654]" onSelect={() => setMode('explorer')}>
+              <DropdownMenuSubContent className="w-80 border-app-border bg-app-surface-2 text-app-text">
+                <DropdownMenuItem className="focus:bg-app-surface-3" onSelect={() => setMode('explorer')}>
                   Explorer
-                  <DropdownMenuShortcut className="text-[#b9c4d1]">Ctrl+Shift+E</DropdownMenuShortcut>
+                  <DropdownMenuShortcut className="text-app-muted">Ctrl+Shift+E</DropdownMenuShortcut>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="focus:bg-[#3a4654]" onSelect={() => setMode('search')}>
+                <DropdownMenuItem className="focus:bg-app-surface-3" onSelect={() => setMode('search')}>
                   Search
-                  <DropdownMenuShortcut className="text-[#b9c4d1]">Ctrl+Shift+F</DropdownMenuShortcut>
+                  <DropdownMenuShortcut className="text-app-muted">Ctrl+Shift+F</DropdownMenuShortcut>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="focus:bg-[#3a4654]" onSelect={() => setMode('extensions')}>
+                <DropdownMenuItem className="focus:bg-app-surface-3" onSelect={() => setMode('extensions')}>
                   Extensions
-                  <DropdownMenuShortcut className="text-[#b9c4d1]">Ctrl+Shift+X</DropdownMenuShortcut>
+                  <DropdownMenuShortcut className="text-app-muted">Ctrl+Shift+X</DropdownMenuShortcut>
                 </DropdownMenuItem>
               </DropdownMenuSubContent>
             </DropdownMenuSub>
 
             <DropdownMenuSub>
               <DropdownMenuSubTrigger className="text-[14px]">Go</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-72 border-[#2a323d] bg-[#303a46] text-[#dbe2ea]">
-                <DropdownMenuItem disabled className="text-[#9aa7b5]">Go to File...</DropdownMenuItem>
-                <DropdownMenuItem disabled className="text-[#9aa7b5]">Go to Symbol...</DropdownMenuItem>
+              <DropdownMenuSubContent className="w-72 border-app-border bg-app-surface-2 text-app-text">
+                <DropdownMenuItem disabled className="text-app-subtle">Go to File...</DropdownMenuItem>
+                <DropdownMenuItem disabled className="text-app-subtle">Go to Symbol...</DropdownMenuItem>
               </DropdownMenuSubContent>
             </DropdownMenuSub>
 
             <DropdownMenuSub>
               <DropdownMenuSubTrigger className="text-[14px]">Run</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-80 border-[#2a323d] bg-[#303a46] text-[#dbe2ea]">
-                <DropdownMenuItem disabled className="text-[#9aa7b5]">Start Debugging</DropdownMenuItem>
-                <DropdownMenuItem disabled className="text-[#9aa7b5]">Run Without Debugging</DropdownMenuItem>
+              <DropdownMenuSubContent className="w-80 border-app-border bg-app-surface-2 text-app-text">
+                <DropdownMenuItem disabled className="text-app-subtle">Start Debugging</DropdownMenuItem>
+                <DropdownMenuItem disabled className="text-app-subtle">Run Without Debugging</DropdownMenuItem>
               </DropdownMenuSubContent>
             </DropdownMenuSub>
 
             <DropdownMenuSub>
               <DropdownMenuSubTrigger className="text-[14px]">Terminal</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-80 border-[#2a323d] bg-[#303a46] text-[#dbe2ea]">
-                <DropdownMenuItem className="focus:bg-[#3a4654]" onSelect={onToggleTerminal} disabled={!onToggleTerminal}>
+              <DropdownMenuSubContent className="w-80 border-app-border bg-app-surface-2 text-app-text">
+                <DropdownMenuItem className="focus:bg-app-surface-3" onSelect={onToggleTerminal} disabled={!onToggleTerminal}>
                   {isTerminalVisible ? 'Hide Terminal Panel' : 'Show Terminal Panel'}
-                  <DropdownMenuShortcut className="text-[#b9c4d1]">Ctrl+`</DropdownMenuShortcut>
+                  <DropdownMenuShortcut className="text-app-muted">Ctrl+`</DropdownMenuShortcut>
                 </DropdownMenuItem>
               </DropdownMenuSubContent>
             </DropdownMenuSub>
 
             <DropdownMenuSub>
               <DropdownMenuSubTrigger className="text-[14px]">Help</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-80 border-[#2a323d] bg-[#303a46] text-[#dbe2ea]">
-                <DropdownMenuItem disabled className="text-[#9aa7b5]">Show All Commands</DropdownMenuItem>
-                <DropdownMenuItem disabled className="text-[#9aa7b5]">Keyboard Shortcuts Reference</DropdownMenuItem>
-                <DropdownMenuItem disabled className="text-[#9aa7b5]">About</DropdownMenuItem>
+              <DropdownMenuSubContent className="w-80 border-app-border bg-app-surface-2 text-app-text">
+                <DropdownMenuItem disabled className="text-app-subtle">Show All Commands</DropdownMenuItem>
+                <DropdownMenuItem disabled className="text-app-subtle">Keyboard Shortcuts Reference</DropdownMenuItem>
+                <DropdownMenuItem disabled className="text-app-subtle">About</DropdownMenuItem>
               </DropdownMenuSubContent>
             </DropdownMenuSub>
           </DropdownMenuContent>
@@ -422,8 +422,8 @@ export function FileBrowser({
             size="icon"
             onClick={() => setMode('explorer')}
             className={cn(
-              'h-7 w-7 rounded-[4px] hover:bg-[#2d3642]',
-              mode === 'explorer' ? 'text-white' : 'text-[#9fa8b5]'
+              'h-7 w-7 rounded-[4px] hover:bg-app-surface-3',
+              mode === 'explorer' ? 'text-app-text' : 'text-app-subtle'
             )}
           >
             <FileText className="h-4 w-4" />
@@ -433,8 +433,8 @@ export function FileBrowser({
             size="icon"
             onClick={() => setMode('search')}
             className={cn(
-              'h-7 w-7 rounded-[4px] hover:bg-[#2d3642]',
-              mode === 'search' ? 'text-white' : 'text-[#9fa8b5]'
+              'h-7 w-7 rounded-[4px] hover:bg-app-surface-3',
+              mode === 'search' ? 'text-app-text' : 'text-app-subtle'
             )}
           >
             <Search className="h-4 w-4" />
@@ -444,8 +444,8 @@ export function FileBrowser({
             size="icon"
             onClick={() => setMode('extensions')}
             className={cn(
-              'h-7 w-7 rounded-[4px] hover:bg-[#2d3642]',
-              mode === 'extensions' ? 'text-white' : 'text-[#9fa8b5]'
+              'h-7 w-7 rounded-[4px] hover:bg-app-surface-3',
+              mode === 'extensions' ? 'text-app-text' : 'text-app-subtle'
             )}
           >
             <Boxes className="h-4 w-4" />
@@ -455,8 +455,8 @@ export function FileBrowser({
 
       {mode === 'explorer' && (
         <>
-          <div className="flex h-9 items-center justify-between border-b border-[#1b1f23] px-2 text-[13px]">
-            <div className="truncate font-semibold uppercase tracking-wide text-[#e1e4e8]" title={projectName}>
+          <div className="flex h-9 items-center justify-between border-b border-app-border px-2 text-[13px]">
+            <div className="truncate font-semibold uppercase tracking-wide text-app-text" title={projectName}>
               {projectName}
             </div>
             <div className="flex items-center gap-0.5">
@@ -464,7 +464,7 @@ export function FileBrowser({
                 variant="ghost"
                 size="icon"
                 onClick={() => beginCreate('file')}
-                className="h-6 w-6 rounded-[4px] text-[#aeb6c2] hover:bg-[#2d3642] hover:text-white"
+                className="h-6 w-6 rounded-[4px] text-app-muted hover:bg-app-surface-3 hover:text-app-text"
                 title="New File"
               >
                 <FilePlus2 className="h-3.5 w-3.5" />
@@ -473,7 +473,7 @@ export function FileBrowser({
                 variant="ghost"
                 size="icon"
                 onClick={() => beginCreate('directory')}
-                className="h-6 w-6 rounded-[4px] text-[#aeb6c2] hover:bg-[#2d3642] hover:text-white"
+                className="h-6 w-6 rounded-[4px] text-app-muted hover:bg-app-surface-3 hover:text-app-text"
                 title="New Folder"
               >
                 <FolderPlus className="h-3.5 w-3.5" />
@@ -482,7 +482,7 @@ export function FileBrowser({
                 variant="ghost"
                 size="icon"
                 onClick={onRefresh}
-                className="h-6 w-6 rounded-[4px] text-[#aeb6c2] hover:bg-[#2d3642] hover:text-white"
+                className="h-6 w-6 rounded-[4px] text-app-muted hover:bg-app-surface-3 hover:text-app-text"
                 title="Refresh"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
@@ -491,7 +491,7 @@ export function FileBrowser({
                 variant="ghost"
                 size="icon"
                 onClick={collapseAll}
-                className="h-6 w-6 rounded-[4px] text-[#aeb6c2] hover:bg-[#2d3642] hover:text-white"
+                className="h-6 w-6 rounded-[4px] text-app-muted hover:bg-app-surface-3 hover:text-app-text"
                 title="Collapse All"
               >
                 <ChevronsUpDown className="h-3.5 w-3.5" />
@@ -509,21 +509,21 @@ export function FileBrowser({
       )}
 
       {mode === 'search' && (
-        <div className="flex flex-1 flex-col border-t border-[#1b1f23] p-2">
-          <div className="mb-2 text-[12px] font-semibold uppercase tracking-wide text-[#e1e4e8]">Search</div>
+        <div className="flex flex-1 flex-col border-t border-app-border p-2">
+          <div className="mb-2 text-[12px] font-semibold uppercase tracking-wide text-app-text">Search</div>
           <input
             placeholder="Search"
-            className="h-8 rounded border border-[#0e4f9f] bg-[#0f1218] px-2 text-[13px] text-[#d8dee8] outline-none"
+            className="h-8 rounded border border-app-primary/70 bg-app-editor-bg px-2 text-[13px] text-app-text outline-none"
           />
           <input
             placeholder="Replace"
-            className="mt-2 h-8 rounded border border-[#2a313d] bg-[#0f1218] px-2 text-[13px] text-[#aeb6c2] outline-none"
+            className="mt-2 h-8 rounded border border-app-border bg-app-editor-bg px-2 text-[13px] text-app-muted outline-none"
           />
         </div>
       )}
 
       {mode === 'extensions' && (
-        <div className="flex flex-1 items-center justify-center text-xs text-[#95a1af]">
+        <div className="flex flex-1 items-center justify-center text-xs text-app-subtle">
           Extensions view coming soon
         </div>
       )}

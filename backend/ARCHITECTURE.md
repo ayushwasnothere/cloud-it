@@ -57,6 +57,7 @@ Delete Project
 - Each container runs with `sandbox` user (no root)
 - Limited to project directory
 - Network mode is configurable via `SANDBOX_NETWORK_MODE` (`bridge` by default, `none` to fully disable)
+- App preview port `3000/tcp` is published to a random loopback host port (configurable via `SANDBOX_PREVIEW_PORT`)
 - Memory/CPU limits via Docker config
 - Idle timeout after 10 minutes (kills container)
 

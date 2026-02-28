@@ -56,19 +56,19 @@ export function CreateProjectModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-neutral-900 border-neutral-800">
+      <DialogContent className="bg-app-surface border-app-border">
         <DialogHeader>
-          <DialogTitle className="text-neutral-50">
+          <DialogTitle className="text-app-text">
             Create New Project
           </DialogTitle>
-          <DialogDescription className="text-neutral-400">
+          <DialogDescription className="text-app-muted">
             Set up a new project with your preferred runtime
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-neutral-300 mb-2">
+            <label className="block text-sm font-medium text-app-muted mb-2">
               Project Name
             </label>
             <Input
@@ -76,24 +76,24 @@ export function CreateProjectModal({
               onChange={(e) => setName(e.target.value)}
               placeholder="My Awesome Project"
               disabled={isLoading}
-              className="bg-neutral-800 border-neutral-700 text-neutral-50 placeholder-neutral-500"
+              className="bg-app-surface-2 border-app-border text-app-text placeholder-app-subtle"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-300 mb-2">
+            <label className="block text-sm font-medium text-app-muted mb-2">
               Runtime
             </label>
             <Select value={runtime} onValueChange={setRuntime} disabled={isLoading}>
-              <SelectTrigger className="bg-neutral-800 border-neutral-700 text-neutral-50">
+              <SelectTrigger className="bg-app-surface-2 border-app-border text-app-text">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-neutral-800 border-neutral-700">
+              <SelectContent className="bg-app-surface-2 border-app-border">
                 {RUNTIMES.map((rt) => (
                   <SelectItem
                     key={rt.id}
                     value={rt.value}
-                    className="text-neutral-50"
+                    className="text-app-text"
                   >
                     {rt.label}
                   </SelectItem>
@@ -107,14 +107,14 @@ export function CreateProjectModal({
               variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={isLoading}
-              className="border-neutral-700"
+              className="border-app-border"
             >
               Cancel
             </Button>
             <Button
               onClick={handleCreate}
               disabled={isLoading}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-app-primary hover:bg-app-primary-hover text-white"
             >
               {isLoading ? (
                 <div className="flex items-center gap-2">

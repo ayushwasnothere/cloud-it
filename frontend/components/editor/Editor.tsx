@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 const MonacoEditor = dynamic(
   () => import('@monaco-editor/react').then((mod) => mod.default),
   {
-    loading: () => <Skeleton className="w-full h-full bg-neutral-800" />,
+    loading: () => <Skeleton className="w-full h-full bg-app-surface-2" />,
     ssr: false,
   }
 )
@@ -66,7 +66,7 @@ export function Editor({
   }
 
   if (!mounted) {
-    return <Skeleton className="w-full h-full bg-neutral-800" />
+    return <Skeleton className="w-full h-full bg-app-surface-2" />
   }
 
   return (
@@ -130,13 +130,13 @@ export function Editor({
             base: 'vs-dark',
             inherit: true,
             colors: {
-              'editor.background': '#000000',
-              'editor.foreground': '#ececec',
-              'editor.lineNumbersColor': '#404040',
-              'editor.lineHighlightBackground': '#1a1a1a',
-              'editorCursor.foreground': '#ececec',
-              'editor.selectionBackground': '#1e4d7b',
-              'editor.wordHighlightBackground': '#1e4d7b',
+              'editor.background': '#121822',
+              'editor.foreground': '#eef4ff',
+              'editor.lineNumbersColor': '#5f6f87',
+              'editor.lineHighlightBackground': '#1b2430',
+              'editorCursor.foreground': '#eef4ff',
+              'editor.selectionBackground': '#1f4f82',
+              'editor.wordHighlightBackground': '#1f4f82',
             },
             rules: [],
           })

@@ -64,21 +64,21 @@ export default function DashboardPage() {
   }, [logout])
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-app-bg">
       {/* Header */}
-      <header className="bg-neutral-900 border-b border-neutral-800 sticky top-0 z-50">
+      <header className="bg-app-surface border-b border-app-border sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-neutral-50">Cloud IDE</h1>
-              <p className="text-sm text-neutral-400">
+              <h1 className="text-2xl font-bold text-app-text">Cloud IDE</h1>
+              <p className="text-sm text-app-muted">
                 Welcome back, {user?.name}
               </p>
             </div>
             <Button
               variant="outline"
               onClick={handleLogout}
-              className="border-neutral-700 text-neutral-400 hover:text-neutral-50 hover:bg-neutral-800"
+              className="border-app-border bg-app-surface text-app-muted hover:bg-app-surface-2 hover:text-app-text"
             >
               <LogOut className="w-4 h-4 mr-2" />
               Logout
@@ -92,16 +92,16 @@ export default function DashboardPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-xl font-semibold text-neutral-50">
+              <h2 className="text-xl font-semibold text-app-text">
                 Your Projects
               </h2>
-              <p className="text-sm text-neutral-400 mt-1">
+              <p className="text-sm text-app-muted mt-1">
                 {projects.length} project{projects.length !== 1 ? 's' : ''}
               </p>
             </div>
             <Button
               onClick={() => setCreateModalOpen(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-app-primary hover:bg-app-primary-hover text-white"
             >
               <Plus className="w-4 h-4 mr-2" />
               New Project
@@ -111,15 +111,15 @@ export default function DashboardPage() {
           {isLoading ? (
   <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
     {[...Array(3)].map((_, i) => (
-      <Skeleton key={i} className="h-48 bg-neutral-800" />
+      <Skeleton key={i} className="h-48 bg-app-surface-2" />
     ))}
   </div>
 ) : projects.length === 0 ? (
   <div className="text-center py-12">
-    <p className="text-neutral-400 mb-4">No projects yet</p>
+    <p className="text-app-muted mb-4">No projects yet</p>
     <Button
       onClick={() => setCreateModalOpen(true)}
-      className="bg-blue-600 hover:bg-blue-700 text-white"
+      className="bg-app-primary hover:bg-app-primary-hover text-white"
     >
       Create Your First Project
     </Button>
@@ -148,24 +148,24 @@ export default function DashboardPage() {
       />
 
       <AlertDialog open={!!deleteConfirm} onOpenChange={() => setDeleteConfirm(null)}>
-        <AlertDialogContent className="bg-neutral-900 border-neutral-800">
+        <AlertDialogContent className="bg-app-surface border-app-border">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-neutral-50">
+            <AlertDialogTitle className="text-app-text">
               Delete Project?
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-neutral-400">
+            <AlertDialogDescription className="text-app-muted">
               This action cannot be undone. All files and data will be permanently
               deleted.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="flex gap-2 justify-end pt-4">
-            <AlertDialogCancel className="border-neutral-700 text-neutral-50 hover:bg-neutral-800">
+            <AlertDialogCancel className="border-app-border text-app-text hover:bg-app-surface-2">
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteConfirm && handleDeleteProject(deleteConfirm)}
               disabled={isDeleting}
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className="bg-app-danger hover:bg-app-danger-hover text-white"
             >
               Delete
             </AlertDialogAction>

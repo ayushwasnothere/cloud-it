@@ -38,19 +38,19 @@ export function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black px-4">
-      <Card className="w-full max-w-md bg-neutral-900 border-neutral-800">
+    <div className="min-h-screen flex items-center justify-center bg-app-bg px-4">
+      <Card className="w-full max-w-md bg-app-surface border-app-border">
         <div className="p-8">
-          <h1 className="text-2xl font-bold text-neutral-50 mb-2 text-center">
+          <h1 className="text-2xl font-bold text-app-text mb-2 text-center">
             Cloud IDE
           </h1>
-          <p className="text-sm text-neutral-400 text-center mb-8">
+          <p className="text-sm text-app-muted text-center mb-8">
             Sign in to your account
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-neutral-300 mb-2">
+              <label className="block text-sm font-medium text-app-muted mb-2">
                 Email
               </label>
               <Input
@@ -59,12 +59,12 @@ export function LoginForm() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 disabled={isLoading}
-                className="bg-neutral-800 border-neutral-700 text-neutral-50 placeholder-neutral-500"
+                className="bg-app-surface-2 border-app-border text-app-text placeholder-app-subtle"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-300 mb-2">
+              <label className="block text-sm font-medium text-app-muted mb-2">
                 Password
               </label>
               <Input
@@ -73,12 +73,12 @@ export function LoginForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 disabled={isLoading}
-                className="bg-neutral-800 border-neutral-700 text-neutral-50 placeholder-neutral-500"
+                className="bg-app-surface-2 border-app-border text-app-text placeholder-app-subtle"
               />
             </div>
 
             {error && (
-              <div className="p-3 bg-red-900/20 border border-red-800 rounded text-sm text-red-400">
+              <div className="p-3 bg-app-danger-soft border border-app-danger/60 rounded text-sm text-app-danger">
                 {error}
               </div>
             )}
@@ -86,7 +86,7 @@ export function LoginForm() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              className="w-full bg-app-primary hover:bg-app-primary-hover text-white"
             >
               {isLoading ? (
                 <div className="flex items-center gap-2">
@@ -99,9 +99,9 @@ export function LoginForm() {
             </Button>
           </form>
 
-          <p className="text-sm text-neutral-400 text-center mt-6">
+          <p className="text-sm text-app-muted text-center mt-6">
             Don't have an account?{' '}
-            <Link href="/signup" className="text-blue-400 hover:text-blue-300">
+            <Link href="/signup" className="text-app-primary hover:text-app-primary-hover">
               Sign up
             </Link>
           </p>

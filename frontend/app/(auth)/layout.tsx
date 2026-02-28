@@ -21,10 +21,10 @@ export default function AuthLayout({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="min-h-screen flex items-center justify-center bg-app-bg">
         <div className="flex flex-col items-center gap-4">
-          <Spinner width={40} height={40} />
-          <p className="text-neutral-400">Loading...</p>
+          <Spinner className="size-10 text-app-text" />
+          <p className="text-app-muted">Loading...</p>
         </div>
       </div>
     )

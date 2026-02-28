@@ -51,25 +51,25 @@ export function XTermComponent({
         fontFamily: 'Menlo, Monaco, "Courier New", monospace',
         convertEol: true,
         theme: {
-          background: '#0b0b0d',
-          foreground: '#e8e8ea',
-          cursor: '#e8e8ea',
-          black: '#0b0b0d',
-          red: '#ff5f56',
-          green: '#27c93f',
-          yellow: '#ffbd2e',
-          blue: '#54a3ff',
-          magenta: '#c678dd',
-          cyan: '#56b6c2',
-          white: '#e8e8ea',
-          brightBlack: '#5a5a5f',
-          brightRed: '#ff7b72',
-          brightGreen: '#3fb950',
-          brightYellow: '#f2cc60',
-          brightBlue: '#79c0ff',
-          brightMagenta: '#d2a8ff',
-          brightCyan: '#7ee787',
-          brightWhite: '#f8f8f8',
+          background: '#0b1118',
+          foreground: '#eef4ff',
+          cursor: '#eef4ff',
+          black: '#0b1118',
+          red: '#ef4444',
+          green: '#22c55e',
+          yellow: '#f59e0b',
+          blue: '#3b82f6',
+          magenta: '#a855f7',
+          cyan: '#06b6d4',
+          white: '#eef4ff',
+          brightBlack: '#7e8ea7',
+          brightRed: '#f87171',
+          brightGreen: '#4ade80',
+          brightYellow: '#fbbf24',
+          brightBlue: '#60a5fa',
+          brightMagenta: '#c084fc',
+          brightCyan: '#22d3ee',
+          brightWhite: '#ffffff',
         },
       })
 
@@ -157,7 +157,7 @@ export function XTermComponent({
       ref={terminalRef}
       className="h-full w-full"
       style={{
-        background: '#0b0b0d',
+        background: '#0b1118',
         overflow: 'hidden',
       }}
     />

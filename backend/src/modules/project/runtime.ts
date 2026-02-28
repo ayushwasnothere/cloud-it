@@ -22,9 +22,11 @@ function toProjectStatus(running: boolean) {
 
 async function attachRuntimeStatus(project: ProjectRecord) {
   const containerStatus = await ContainerManager.getStatus(project.id);
+  const preview = await ContainerManager.getPreview(project.id);
   return {
     ...project,
     status: toProjectStatus(containerStatus.running),
+    preview,
   };
 }
 
@@ -83,6 +85,12 @@ async function seedProjectTemplate(
 ) {
   const existing = await readdir(workspacePath).catch(() => []);
   if (existing.length > 0) return;
+  const packageName = projectName
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'repl-app';
 
   const templates: Record<string, Array<{ path: string; content: string }>> = {
     node: [
@@ -90,7 +98,7 @@ async function seedProjectTemplate(
         path: 'package.json',
         content: JSON.stringify(
           {
-            name: projectName.toLowerCase().replace(/\s+/g, '-'),
+            name: packageName,
             private: true,
             version: '0.1.0',
             type: 'module',
@@ -98,6 +106,9 @@ async function seedProjectTemplate(
               dev: 'node --watch src/index.js',
               start: 'node src/index.js',
               test: 'node --test',
+            },
+            engines: {
+              node: '>=20',
             },
           },
           null,
@@ -107,27 +118,61 @@ async function seedProjectTemplate(
       {
         path: 'src/index.js',
         content:
-          "import http from 'node:http';\n\nconst port = process.env.PORT || 3000;\n\nhttp.createServer((_, res) => {\n  res.writeHead(200, { 'Content-Type': 'application/json' });\n  res.end(JSON.stringify({ ok: true, runtime: 'node' }));\n}).listen(port, () => {\n  console.log(`Server running on http://localhost:${port}`);\n});\n",
+          "import http from 'node:http';\n\nconst port = Number(process.env.PORT || 3000);\n\nconst server = http.createServer((req, res) => {\n  res.setHeader('Content-Type', 'application/json');\n\n  if (req.url === '/health') {\n    res.writeHead(200);\n    res.end(JSON.stringify({ ok: true, runtime: 'node', status: 'healthy' }));\n    return;\n  }\n\n  res.writeHead(200);\n  res.end(\n    JSON.stringify({\n      ok: true,\n      runtime: 'node',\n      message: 'Welcome to your Node starter',\n      docs: ['/health'],\n      time: new Date().toISOString(),\n    })\n  );\n});\n\nserver.listen(port, '0.0.0.0', () => {\n  console.log(`Node server running on http://0.0.0.0:${port}`);\n});\n",
       },
-      { path: '.gitignore', content: 'node_modules/\n.env\n' },
+      {
+        path: '.replit',
+        content:
+          'entrypoint = "src/index.js"\n' +
+          'run = "npm install && npm run dev"\n',
+      },
+      {
+        path: '.gitignore',
+        content: 'node_modules/\n.env\n.env.*\nnpm-debug.log*\n',
+      },
+      {
+        path: '.env.example',
+        content: 'PORT=3000\n',
+      },
       {
         path: 'README.md',
-        content: `# ${projectName}\n\nNode.js starter template.\n`,
+        content:
+          `# ${projectName}\n\n` +
+          'Node.js starter template with a basic HTTP API.\n\n' +
+          '## Quick start\n\n' +
+          '```bash\nnpm install\nnpm run dev\n```\n\n' +
+          'Open `http://localhost:3000`.\n',
       },
     ],
     python: [
       {
         path: 'main.py',
         content:
-          "from fastapi import FastAPI\n\napp = FastAPI()\n\n@app.get('/')\ndef root():\n    return {'ok': True, 'runtime': 'python'}\n",
+          "from fastapi import FastAPI\n\napp = FastAPI(title='Python Starter')\n\n\n@app.get('/')\ndef root() -> dict[str, object]:\n    return {\n        'ok': True,\n        'runtime': 'python',\n        'message': 'Welcome to your FastAPI starter',\n    }\n\n\n@app.get('/health')\ndef health() -> dict[str, object]:\n    return {'ok': True, 'status': 'healthy'}\n",
       },
-      { path: 'requirements.txt', content: 'fastapi==0.116.1\nuvicorn==0.35.0\n' },
-      { path: '.gitignore', content: '__pycache__/\n.venv/\n.env\n' },
+      {
+        path: '.replit',
+        content:
+          'entrypoint = "main.py"\n' +
+          'run = "python -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt && uvicorn main:app --host 0.0.0.0 --port ${PORT:-3000} --reload"\n',
+      },
+      {
+        path: 'requirements.txt',
+        content: 'fastapi==0.116.1\nuvicorn[standard]==0.35.0\n',
+      },
+      {
+        path: '.gitignore',
+        content: '__pycache__/\n.pytest_cache/\n.venv/\n.env\n.env.*\n',
+      },
+      { path: '.env.example', content: 'PORT=3000\n' },
       {
         path: 'README.md',
         content:
-          `# ${projectName}\n\nPython starter template.\n\nRun:\n` +
-          '```bash\npip install -r requirements.txt\nuvicorn main:app --reload --host 0.0.0.0 --port 3000\n```\n',
+          `# ${projectName}\n\n` +
+          'FastAPI starter template with health endpoint.\n\n' +
+          '## Quick start\n\n' +
+          '```bash\npython -m venv .venv\n. .venv/bin/activate\npip install -r requirements.txt\nuvicorn main:app --reload --host 0.0.0.0 --port 3000\n```\n\n' +
+          'Open `http://localhost:3000/docs` for interactive API docs.\n',
       },
     ],
     bun: [
@@ -135,7 +180,7 @@ async function seedProjectTemplate(
         path: 'package.json',
         content: JSON.stringify(
           {
-            name: projectName.toLowerCase().replace(/\s+/g, '-'),
+            name: packageName,
             private: true,
             version: '0.1.0',
             scripts: {
@@ -151,7 +196,13 @@ async function seedProjectTemplate(
       {
         path: 'src/index.ts',
         content:
-          "Bun.serve({\n  port: Number(process.env.PORT || 3000),\n  fetch() {\n    return Response.json({ ok: true, runtime: 'bun' })\n  },\n})\n\nconsole.log('Bun server running')\n",
+          "const port = Number(process.env.PORT || 3000);\n\nBun.serve({\n  port,\n  fetch(req) {\n    const url = new URL(req.url);\n\n    if (url.pathname === '/health') {\n      return Response.json({ ok: true, runtime: 'bun', status: 'healthy' });\n    }\n\n    return Response.json({\n      ok: true,\n      runtime: 'bun',\n      message: 'Welcome to your Bun starter',\n      docs: ['/health'],\n      time: new Date().toISOString(),\n    });\n  },\n});\n\nconsole.log(`Bun server running on http://0.0.0.0:${port}`);\n",
+      },
+      {
+        path: '.replit',
+        content:
+          'entrypoint = "src/index.ts"\n' +
+          'run = "bun install && bun run dev"\n',
       },
       {
         path: 'tsconfig.json',
@@ -169,10 +220,19 @@ async function seedProjectTemplate(
           2
         ),
       },
-      { path: '.gitignore', content: '.env\nnode_modules/\n' },
+      {
+        path: '.gitignore',
+        content: '.env\n.env.*\nnode_modules/\n',
+      },
+      { path: '.env.example', content: 'PORT=3000\n' },
       {
         path: 'README.md',
-        content: `# ${projectName}\n\nBun starter template.\n`,
+        content:
+          `# ${projectName}\n\n` +
+          'Bun starter template with a built-in JSON API.\n\n' +
+          '## Quick start\n\n' +
+          '```bash\nbun install\nbun run dev\n```\n\n' +
+          'Open `http://localhost:3000`.\n',
       },
     ],
   };
@@ -214,9 +274,11 @@ const runtimeRoutes = new Elysia({ prefix: '/projects' })
       await mkdir(workspacePath, { recursive: true });
       await seedProjectTemplate(workspacePath, project.runtime, project.name);
 
+      const preview = await ContainerManager.getPreview(project.id);
       return {
         ...project,
         status: 'stopped',
+        preview,
       };
     },
     {
@@ -322,9 +384,11 @@ const runtimeRoutes = new Elysia({ prefix: '/projects' })
       if (!project) return new Response('Project not found', { status: 404 });
 
       await ContainerManager.stopContainer(params.projectId);
+      const preview = await ContainerManager.getPreview(project.id);
       return {
         ...project,
         status: 'stopped',
+        preview,
       };
     },
     {
@@ -345,9 +409,11 @@ const runtimeRoutes = new Elysia({ prefix: '/projects' })
       if (!project) return new Response('Project not found', { status: 404 });
 
       const status = await ContainerManager.getStatus(params.projectId);
+      const preview = await ContainerManager.getPreview(params.projectId);
       return {
         ...status,
         status: toProjectStatus(status.running),
+        preview,
       };
     },
     {

@@ -37,7 +37,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="font-sans antialiased bg-black">
+      <body className="font-sans antialiased bg-app-bg text-app-text">
         {children}
         <Toaster />
         <Analytics />

@@ -37,6 +37,29 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --app-bg: #0b0f14;
+  --app-surface: #131923;
+  --app-surface-2: #1b2330;
+  --app-surface-3: #242f3f;
+  --app-border: #2f3d52;
+  --app-border-strong: #3b4c66;
+  --app-text: #eef4ff;
+  --app-muted: #a7b5cb;
+  --app-subtle: #8090a8;
+  --app-primary: #3b82f6;
+  --app-primary-hover: #2563eb;
+  --app-success: #22c55e;
+  --app-success-hover: #16a34a;
+  --app-warning: #f59e0b;
+  --app-danger: #ef4444;
+  --app-danger-hover: #dc2626;
+  --app-danger-soft: #ef444426;
+  --app-editor-bg: #121822;
+  --app-editor-header: #1b2430;
+  --app-editor-hover: #2a3546;
+  --app-editor-selection: #1f4f82;
+  --app-terminal-bg: #0b1118;
+  --app-terminal-header: #141c26;
 }
 
 .dark {
@@ -72,6 +95,29 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
+  --app-bg: #0b0f14;
+  --app-surface: #131923;
+  --app-surface-2: #1b2330;
+  --app-surface-3: #242f3f;
+  --app-border: #2f3d52;
+  --app-border-strong: #3b4c66;
+  --app-text: #eef4ff;
+  --app-muted: #a7b5cb;
+  --app-subtle: #8090a8;
+  --app-primary: #3b82f6;
+  --app-primary-hover: #2563eb;
+  --app-success: #22c55e;
+  --app-success-hover: #16a34a;
+  --app-warning: #f59e0b;
+  --app-danger: #ef4444;
+  --app-danger-hover: #dc2626;
+  --app-danger-soft: #ef444426;
+  --app-editor-bg: #121822;
+  --app-editor-header: #1b2430;
+  --app-editor-hover: #2a3546;
+  --app-editor-selection: #1f4f82;
+  --app-terminal-bg: #0b1118;
+  --app-terminal-header: #141c26;
 }
 
 @theme inline {
@@ -113,6 +159,29 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-app-bg: var(--app-bg);
+  --color-app-surface: var(--app-surface);
+  --color-app-surface-2: var(--app-surface-2);
+  --color-app-surface-3: var(--app-surface-3);
+  --color-app-border: var(--app-border);
+  --color-app-border-strong: var(--app-border-strong);
+  --color-app-text: var(--app-text);
+  --color-app-muted: var(--app-muted);
+  --color-app-subtle: var(--app-subtle);
+  --color-app-primary: var(--app-primary);
+  --color-app-primary-hover: var(--app-primary-hover);
+  --color-app-success: var(--app-success);
+  --color-app-success-hover: var(--app-success-hover);
+  --color-app-warning: var(--app-warning);
+  --color-app-danger: var(--app-danger);
+  --color-app-danger-hover: var(--app-danger-hover);
+  --color-app-danger-soft: var(--app-danger-soft);
+  --color-app-editor-bg: var(--app-editor-bg);
+  --color-app-editor-header: var(--app-editor-header);
+  --color-app-editor-hover: var(--app-editor-hover);
+  --color-app-editor-selection: var(--app-editor-selection);
+  --color-app-terminal-bg: var(--app-terminal-bg);
+  --color-app-terminal-header: var(--app-terminal-header);
 }
 
 @layer base {
