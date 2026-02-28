@@ -57,7 +57,7 @@ export function TopBar({
     <header className="bg-app-surface border-b border-app-border px-4 sm:px-6 py-3 flex items-center justify-between">
       <div className="flex items-center gap-4">
         <Link href="/dashboard" className="hover:opacity-80 transition-opacity">
-          <h1 className="text-lg font-semibold text-app-text">Cloud IDE</h1>
+          <h1 className="text-lg font-semibold text-app-text">CloudIt</h1>
         </Link>
         <div className="h-6 w-px bg-app-border" />
         <div className="flex items-center gap-3">

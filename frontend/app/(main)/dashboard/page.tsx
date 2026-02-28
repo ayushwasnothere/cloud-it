@@ -69,11 +69,11 @@ export default function DashboardPage() {
       <header className="bg-app-surface border-b border-app-border sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-app-text">Cloud IDE</h1>
-              <p className="text-sm text-app-muted">
+            <div className="flex items-center gap-4">
+              <h1 className="text-2xl font-bold text-app-text">CloudIt</h1>
+              <span className="px-2.5 py-1 text-xs font-medium bg-app-surface border border-app-border rounded-full text-app-muted">
                 Welcome back, {user?.name}
-              </p>
+              </span>
             </div>
             <Button
               variant="outline"

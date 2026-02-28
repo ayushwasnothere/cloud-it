@@ -41,12 +41,14 @@ export function LoginForm() {
     <div className="min-h-screen flex items-center justify-center bg-app-bg px-4">
       <Card className="w-full max-w-md bg-app-surface border-app-border">
         <div className="p-8">
-          <h1 className="text-2xl font-bold text-app-text mb-2 text-center">
-            Cloud IDE
-          </h1>
-          <p className="text-sm text-app-muted text-center mb-8">
-            Sign in to your account
-          </p>
+          <div className="flex flex-col space-y-2 text-center">
+            <h1 className="text-2xl font-bold tracking-tight text-app-text">
+              CloudIt
+            </h1>
+            <p className="text-sm text-app-muted text-center mb-8">
+              Sign in to your account
+            </p>
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -86,7 +88,7 @@ export function LoginForm() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-app-primary hover:bg-app-primary-hover text-white"
+              className="w-full bg-white hover:bg-white/90 text-black font-medium"
             >
               {isLoading ? (
                 <div className="flex items-center gap-2">

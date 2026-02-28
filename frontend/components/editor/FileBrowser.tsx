@@ -384,17 +384,6 @@ export function FileBrowser({
           >
             <Search className="h-4 w-4" />
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setMode('extensions')}
-            className={cn(
-              'h-7 w-7 rounded-[4px] hover:bg-app-surface-2',
-              mode === 'extensions' ? 'text-app-text' : 'text-app-subtle'
-            )}
-          >
-            <Boxes className="h-4 w-4" />
-          </Button>
         </div>
       </div>
 
@@ -566,16 +555,6 @@ export function FileBrowser({
                 <ContextMenuShortcut className="text-app-danger">Shift+Delete</ContextMenuShortcut>
               </ContextMenuItem>
               <ContextMenuSeparator className="bg-app-border-strong" />
-              <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={(e) => {
-                e.preventDefault()
-                if (onToggleTerminal) {
-                  onToggleTerminal()
-                }
-              }} disabled={!onToggleTerminal}>
-                <TerminalIcon className="mr-2 h-4 w-4 text-app-muted" />
-                Open In Integrated Terminal
-              </ContextMenuItem>
-              <ContextMenuSeparator className="bg-app-border-strong" />
               <ContextMenuItem className="focus:bg-app-surface-3 cursor-pointer" onSelect={async () => {
                 if (!activeEntry || activeEntry.type === 'directory') return
                 try {
@@ -605,12 +584,6 @@ export function FileBrowser({
             placeholder="Replace"
             className="mt-2 h-8 rounded border border-app-border bg-app-editor-bg px-2 text-[13px] text-app-muted outline-none"
           />
-        </div>
-      )}
-
-      {mode === 'extensions' && (
-        <div className="flex flex-1 items-center justify-center text-xs text-app-subtle">
-          Extensions view coming soon
         </div>
       )}
     </aside>

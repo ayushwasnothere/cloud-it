@@ -1,7 +1,7 @@
 const rateMap = new Map<string, { count: number; reset: number }>();
 
 const WINDOW = 60_000; // 1 minute
-const LIMIT = 20;      // 20 requests per minute
+const LIMIT = 50;      // 50 requests per minute
 
 export function checkRateLimit(userId: string) {
   const now = Date.now();
