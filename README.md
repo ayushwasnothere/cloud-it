@@ -10,6 +10,7 @@
   <br />
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](#)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)](#)
 [![Monaco Editor](https://img.shields.io/badge/Monaco_Editor-React-007ACC?logo=visualstudiocode)](#)
 [![Elysia.js](https://img.shields.io/badge/Elysia-Bun-f3d300?logo=bun)](#)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?logo=tailwindcss)](#)
@@ -30,7 +31,8 @@
 - 🧬 **Native File Operations**: Right-click context menu (Cut, Copy, Paste, Rename, Delete, Download) executing natively on the disk
 - 🌙 **Modern Editor**: Monaco Editor customized with a pure black `#000000` `vercel-dark` high-contrast theme
 - 💻 **Terminal Integration**: Real-time terminal sessions via WebSocket with xterm.js
-- 🐋 **Container Control**: Start/stop project states via Dockerode integrations
+- 🐋 **Containerized Sandboxes**: Every project securely runs inside its own isolated Docker environment, dynamically provisioned via Dockerode for pristine, zero-conflict runtimes (Node, Python, Bun).
+- ⚡ **Workspace Orchestration**: Containers are synced instantly to local volumes, allowing immediate execution with automatic start/stop states to preserve system resources.
 
 <br />
 
@@ -129,9 +131,16 @@ CloudIt hooks into powerful native OS bindings through `Bun.$` to execute rapid 
 - **ZIP Downloads**: Rapid server-side archiving bypassing heavy directories like `node_modules` or `__pycache__`.
 - **System Move/Copy**: `mv` and `cp` are triggered via the custom ContextMenu, keeping UI latency at a minimum.
 
-### Terminal & WebSocket
+### 🐋 Secure Docker Orchestration
 
-Real-time sessions are secured via HTTP-only Auth cookies mapped to Dockerode container streams in `src/modules/terminal.ts`. Containers are paused and removed cleanly when web-sockets drop.
+Every project automatically boots its own isolated Docker container to ensure complete environment parity and security:
+
+- **Language Support**: The backend dynamically assigns lightweight `node:20-alpine`, `python:3.11-alpine`, or `oven/bun:alpine` containers based on user selection.
+- **Persistent Volume Mounts**: Container volumes are intricately bind-mounted to your local project directories, meaning code edits instantly execute inside the sandbox without manual synchronization commands.
+
+### 🔌 Terminal & WebSockets
+
+Real-time terminal sessions are fully encrypted and secured via HTTP-only Auth cookies mapped directly to active Dockerode `exec` streams in `src/modules/terminal.ts`. Active containers are smartly paused and removed cleanly when sockets drop.
 
 ## Contributing
 
